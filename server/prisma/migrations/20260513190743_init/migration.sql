@@ -5,25 +5,6 @@ CREATE TYPE "CategoriaLivro" AS ENUM ('ROMANCE', 'INFANTIL', 'TECNOLOGIA', 'HIST
 CREATE TYPE "StatusEmprestimo" AS ENUM ('EM_ANDAMENTO', 'DEVOLVIDO', 'ATRASADO');
 
 -- CreateTable
-CREATE TABLE "User" (
-    "id" SERIAL NOT NULL,
-    "firstName" TEXT NOT NULL,
-    "lastName" TEXT NOT NULL,
-    "age" INTEGER NOT NULL,
-
-    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Test" (
-    "id" SERIAL NOT NULL,
-    "name" TEXT NOT NULL,
-    "age" INTEGER NOT NULL,
-
-    CONSTRAINT "Test_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "Livro" (
     "id" TEXT NOT NULL,
     "titulo" TEXT NOT NULL,
