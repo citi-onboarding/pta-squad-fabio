@@ -3,47 +3,155 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { LogoCITi, house, book, plus } from "@/assets";
+
+function useScreenSize() {
+  const [size, setSize] = useState<
+    "compactMobile" | "mobile" | "desktop" | "ultrawide"
+  >("desktop");
+
+  useEffect(() => {
+    const update = () => {
+      const w = window.innerWidth;
+      if (w <= 425) setSize("compactMobile");
+      else if (w < 640) setSize("mobile");
+      else if (w < 1920) setSize("desktop");
+      else setSize("ultrawide");
+    };
+
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  return size;
+}
 
 export default function Header() {
   const pathname = usePathname();
+  const screen = useScreenSize();
+
+  const isUltrawide = screen === "ultrawide";
+  const isCompactMobile = screen === "compactMobile";
+  const isMobile = screen === "mobile";
+
+  const navLinkClass = (path: string) =>
+    `flex items-center transition-colors rounded-md font-medium ${
+      pathname === path
+        ? "bg-green-50 text-green-600"
+        : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+    } ${
+      isUltrawide
+        ? "gap-3 px-6 py-3 text-xl"
+        : isMobile
+        ? "gap-1.5 px-2.5 py-2 text-xs"
+        : "gap-2 px-3 py-2 text-sm"
+    }`;
 
   return (
-    <header className="w-full border-b border-gray-200 bg-white px-2 md:px-8 py-3 md:py-4 flex items-center justify-between">      <div className="flex items-center gap-2 md:gap-3">
-        <Image src={LogoCITi} alt="CITi Logo" width={40} height={40} />
-        <span className="text-xs md:text-lg font-semibold text-gray-800">
-          Biblioteca Escolar
-        </span>
-      </div>
+    <header
+      className="w-full border-b border-gray-200 bg-white"
+      style={{
+        height: isUltrawide ? "88px" : isMobile ? "56px" : "64px",
+      }}
+    >
+      <div
+        className="h-full flex items-center justify-between"
+        style={{
+          padding: isUltrawide
+            ? "0 120px"
+            : isMobile
+            ? "0 16px"
+            : "0 clamp(16px, 4vw, 80px)",
+        }}
+      >
+        {/* Logo */}
+        <div
+          className="flex items-center"
+          style={{ gap: isUltrawide ? "16px" : "10px" }}
+        >
+          <div
+            style={{
+              width: isUltrawide ? "52px" : isMobile ? "28px" : "36px",
+              height: isUltrawide ? "52px" : isMobile ? "28px" : "36px",
+              position: "relative",
+              flexShrink: 0,
+            }}
+          >
+            <Image
+              src={LogoCITi}
+              alt="CITi Logo"
+              fill
+              style={{ objectFit: "contain" }}
+            />
+          </div>
+          <span
+            className="font-semibold text-gray-800 whitespace-nowrap"
+            style={{
+              fontSize: isUltrawide ? "22px" : isMobile ? "13px" : "16px",
+            }}
+          >
+            Biblioteca Escolar
+          </span>
+        </div>
 
-      <nav className="flex items-center gap-2 md:gap-6">
-        <Link
-          href="/"
-          className={`flex items-center gap-1 md:gap-2 text-xs md:text-sm px-2 md:px-3 py-1.5 rounded-md transition-colors ${
-            pathname === "/"
-              ? "bg-green-100 text-green-600"
-              : "text-gray-600 hover:text-gray-900"
-          }`}
+        {/* Nav */}
+        <nav
+          className="flex items-center"
+          style={{ gap: isUltrawide ? "12px" : isMobile ? "4px" : "8px" }}
         >
-          <Image src={house} alt="Dashboard" width={16} height={16} />
-          Dashboard
-        </Link>
-        <Link
-          href="/livros"
-          className={`flex items-center gap-1 md:gap-2 text-xs md:text-sm px-2 md:px-3 py-1.5 rounded-md transition-colors ${
-            pathname === "/livros"
-              ? "bg-green-100 text-green-600"
-              : "text-gray-600 hover:text-gray-900"
-          }`}
-        >
-          <Image src={book} alt="Livros" width={16} height={16} />
-          Livros
-        </Link>
-        <button className="flex items-center gap-1 md:gap-2 bg-green-500 hover:bg-green-600 text-white text-xs md:text-sm font-medium px-2 md:px-4 py-2 rounded-md">
-          <Image src={plus} alt="Novo Livro" width={16} height={16} />
-          Novo Livro
-        </button>
-      </nav>
+          <Link href="/" className={navLinkClass("/")}>
+            <Image
+              src={house}
+              alt=""
+              width={isUltrawide ? 22 : 16}
+              height={isUltrawide ? 22 : 16}
+            />
+            <span>Dashboard</span>
+          </Link>
+
+          <Link href="/livros" className={navLinkClass("/livros")}>
+            <Image
+              src={book}
+              alt=""
+              width={isUltrawide ? 22 : 16}
+              height={isUltrawide ? 22 : 16}
+            />
+            <span>Livros</span>
+          </Link>
+
+          <button
+            className="flex items-center bg-green-500 hover:bg-green-600 active:bg-green-700 text-white font-medium rounded-md transition-colors whitespace-nowrap shrink-0"
+            style={{
+              gap: isUltrawide ? "12px" : isCompactMobile ? "2px" : isMobile ? "4px" : "8px",
+              padding: isUltrawide
+                ? "12px 28px"
+                : isCompactMobile
+                ? "4px 6px"
+                : isMobile
+                ? "6px 8px"
+                : "8px 16px",
+              fontSize: isUltrawide
+                ? "20px"
+                : isCompactMobile
+                ? "8px"
+                : isMobile
+                ? "10px"
+                : "14px",
+              marginLeft: isUltrawide ? "16px" : "8px",
+            }}
+          >
+            <Image
+              src={plus}
+              alt=""
+              width={isUltrawide ? 22 : isCompactMobile ? 12 : isMobile ? 14 : 16}
+              height={isUltrawide ? 22 : isCompactMobile ? 12 : isMobile ? 14 : 16}
+            />
+            <span>Novo Livro</span>
+          </button>
+        </nav>
+      </div>
     </header>
   );
 }
