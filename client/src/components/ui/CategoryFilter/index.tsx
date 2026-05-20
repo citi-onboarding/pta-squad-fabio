@@ -4,7 +4,6 @@ import { useState, useRef, useEffect } from "react";
 // TIPOS
 // ─────────────────────────────────────────────────────────────────
 export type Category =
-  | "Categoria"
   | "Ficção"
   | "Técnico"
   | "Biografia"
@@ -12,7 +11,6 @@ export type Category =
   | "Ciência";
 
 export const CATEGORIES: Category[] = [
-  "Categoria",
   "Ficção",
   "Técnico",
   "Biografia",
@@ -21,7 +19,7 @@ export const CATEGORIES: Category[] = [
 ];
 
 interface CategoryFilterProps {
-  selectedCategory: Category;
+  selectedCategory: Category | "";
   onCategorySelect: (category: Category) => void;
 }
 
@@ -34,7 +32,6 @@ export default function CategoryFilter({
 }: CategoryFilterProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
 
-  // Fecha o dropdown ao clicar fora
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -46,8 +43,12 @@ export default function CategoryFilter({
         setIsDropdownOpen(false);
       }
     }
+
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   function handleSelect(category: Category) {
@@ -64,23 +65,17 @@ export default function CategoryFilter({
         aria-haspopup="listbox"
         aria-expanded={isDropdownOpen}
       >
-        <span style={styles.categoryTag}>{selectedCategory}</span>
-        <svg
-          style={{
-            ...styles.arrow,
-            transform: isDropdownOpen ? "rotate(180deg)" : "rotate(0deg)",
-          }}
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
-        >
-          <polyline points="6 9 12 15 18 9" />
-        </svg>
+        <span style={styles.categoryTag}>
+          {selectedCategory || "\u00A0"}
+        </span>
       </button>
 
       {isDropdownOpen && (
-        <ul style={styles.dropdown} role="listbox" aria-label="Categorias">
+        <ul
+          style={styles.dropdown}
+          role="listbox"
+          aria-label="Categorias"
+        >
           {CATEGORIES.map((cat) => (
             <li
               key={cat}
@@ -89,16 +84,21 @@ export default function CategoryFilter({
               onClick={() => handleSelect(cat)}
               style={{
                 ...styles.dropdownItem,
-                ...(cat === selectedCategory ? styles.dropdownItemActive : {}),
+                ...(cat === selectedCategory
+                  ? styles.dropdownItemActive
+                  : {}),
               }}
             >
               <span
                 style={{
                   ...styles.dot,
                   background:
-                    cat === selectedCategory ? "#3b82f6" : "#d1d5db",
+                    cat === selectedCategory
+                      ? "#3b82f6"
+                      : "#d1d5db",
                 }}
               />
+
               {cat}
             </li>
           ))}
@@ -114,61 +114,80 @@ export default function CategoryFilter({
 const styles: Record<string, React.CSSProperties> = {
   filterWrapper: {
     position: "relative",
+
+    width: "180px",
+
+    background: "#ffffff",
+    borderRadius: "8px",
+
     flexShrink: 0,
   },
+
   filterButton: {
+    width: "100%",
+    height: "100%",
+
     display: "flex",
     alignItems: "center",
-    gap: "8px",
+    justifyContent: "center",
+
     background: "transparent",
     border: "none",
+
     cursor: "pointer",
-    padding: "4px 6px",
-    borderRadius: "8px",
+
+    padding: "8px 14px",
   },
+
   categoryTag: {
-    fontSize: "13px",
-    fontWeight: 600,
-    color: "#3b82f6",
-    background: "#eff6ff",
-    padding: "3px 10px",
-    borderRadius: "20px",
+    fontSize: "14px",
+    fontWeight: 400,
+    color: "#475569",
   },
-  arrow: {
-    width: "14px",
-    height: "14px",
-    color: "#64748b",
-    transition: "transform 0.2s ease",
-  },
+
   dropdown: {
     position: "absolute",
     top: "calc(100% + 8px)",
     right: 0,
-    minWidth: "160px",
+
+    minWidth: "140px",
+
     background: "#ffffff",
+
     borderRadius: "12px",
     border: "1.5px solid #e2e8f0",
+
     boxShadow: "0 8px 24px rgba(0,0,0,0.10)",
+
     listStyle: "none",
+
     padding: "6px",
     margin: 0,
+
     zIndex: 100,
   },
+
   dropdownItem: {
     display: "flex",
     alignItems: "center",
     gap: "10px",
+
     padding: "9px 12px",
+
     borderRadius: "8px",
+
     cursor: "pointer",
+
     fontSize: "13px",
     color: "#475569",
   },
+
   dropdownItemActive: {
     background: "#eff6ff",
     color: "#2563eb",
     fontWeight: 600,
   },
+
   dot: {
     width: "7px",
     height: "7px",

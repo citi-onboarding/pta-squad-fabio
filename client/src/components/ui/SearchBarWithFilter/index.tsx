@@ -16,7 +16,7 @@ export default function SearchBarWithFilter({
   onSearch,
 }: SearchBarWithFilterProps) {
   const [query, setQuery] = useState<string>("");
-  const [selectedCategory, setSelectedCategory] = useState<Category>("Categoria");
+  const [selectedCategory, setSelectedCategory] = useState<Category | "">("");
 
   // ── Handlers ─────────────────────────────────────────────────
 
@@ -39,17 +39,13 @@ export default function SearchBarWithFilter({
   return (
     <div style={styles.wrapper}>
       <div style={styles.searchBar}>
-        {/* Campo de busca */}
         <SearchBar
           query={query}
           onQueryChange={handleQueryChange}
           onSubmit={handleSubmit}
         />
-
-        {/* Divisor visual */}
-        <div style={styles.divider} />
-
-        {/* Filtro de categorias */}
+      </div>
+      <div style={styles.filterWrapper}>
         <CategoryFilter
           selectedCategory={selectedCategory}
           onCategorySelect={handleCategorySelect}
@@ -62,25 +58,30 @@ export default function SearchBarWithFilter({
 const styles: Record<string, React.CSSProperties> = {
   wrapper: {
     width: "100%",
-    padding: "12px",
-    background: "#f8fafc",
-    borderRadius: "16px",
-    boxShadow: "0 1px 6px rgba(0,0,0,0.08)",
+    padding: "20px",
+    background: "#ffffff",
+    border: "0.5px solid #cbd5e1",
+    borderRadius: "5px",
+    display: "flex",
+    alignItems: "stretch",
+    gap: "12px",
   },
   searchBar: {
     display: "flex",
     alignItems: "center",
     gap: "10px",
     background: "#ffffff",
-    borderRadius: "12px",
-    padding: "10px 16px",
-    border: "1.5px solid #e2e8f0",
-    boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+    borderRadius: "5px",
+    padding: "8px 12px",
+    border: "0.5px solid #cbd5e1",
+    flex: 1,
   },
-  divider: {
-    width: "1px",
-    height: "22px",
-    background: "#e2e8f0",
-    flexShrink: 0,
+  filterWrapper: {
+    background: "#ffffff",
+    borderRadius: "5px",
+    border: "0.5px solid #cbd5e1",
+    padding: 0,
+    display: "flex",
+    alignItems: "stretch",
   },
 };
