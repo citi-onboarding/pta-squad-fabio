@@ -4,7 +4,7 @@ import SearchBar from "../SearchBar";
 import CategoryFilter, { Category } from "../CategoryFilter";
 
 interface SearchBarWithFilterProps {
-  onSearch?: (query: string, category: Category) => void;
+  onSearch?: (query: string, category: Category | "") => void;
 }
 
 // ─────────────────────────────────────────────────────────────────
