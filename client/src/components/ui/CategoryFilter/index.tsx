@@ -20,7 +20,7 @@ export const CATEGORIES: Category[] = [
 
 interface CategoryFilterProps {
   selectedCategory: Category | "";
-  onCategorySelect: (category: Category) => void;
+  onCategorySelect: (category: Category | "") => void;
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -52,7 +52,8 @@ export default function CategoryFilter({
   }, []);
 
   function handleSelect(category: Category) {
-    onCategorySelect(category);
+    const newCategory = category === selectedCategory ? "" : category;
+    onCategorySelect(newCategory);
     setIsDropdownOpen(false);
   }
 
