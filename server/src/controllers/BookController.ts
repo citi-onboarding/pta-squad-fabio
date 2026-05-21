@@ -73,23 +73,6 @@ class BookController implements Crud{
         return response.status(httpStatus).send({messageFromDelete});
     };
 
-    update = async (request:Request, response:Response) =>{
-        // Definindo que vamos dar update pelo id do livro.
-        const {id} = request.params;
-        // O update vai receber os novos dados da requisisão body.
-        const {titulo, autor, isbn, editora, ano, quantidadeTotal, categoria}=request.body;
-
-        const updatedValues={
-            titulo, autor, 
-            isbn, editora, 
-            ano:Number(ano), quantidadeTotal:Number(quantidadeTotal), 
-            quantidadeDisponivel:Number(quantidadeTotal), categoria
-        };
-
-        const {httpStatus, messageFromUpdate} = await this.citi.updateValue(id,updatedValues);
-        return response.status(httpStatus).send({messageFromUpdate})
-    };
-
     getById = async(request:Request, response:Response) =>{
         // Passando o id.
         const {id} = request.params;
