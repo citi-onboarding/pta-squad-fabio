@@ -17,8 +17,9 @@ import house from "./Icons/house.svg";
 import mail from "./Icons/mail.svg";
 import plus from "./Icons/plus.svg";
 import search from "./Icons/search.svg";
+import eye from "./Icons/eye.svg";
 
 
 
 
-export { LogoCITi, ciencias, historia, infantil, romance, tecnologia, book, bookmark, clock, deleteicon, exclamation, house, mail, plus, search };
+export { LogoCITi, ciencias, historia, infantil, romance, tecnologia, book, bookmark, clock, deleteicon, exclamation, house, mail, plus, search, eye };
