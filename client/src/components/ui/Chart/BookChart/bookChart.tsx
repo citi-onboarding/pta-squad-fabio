@@ -40,7 +40,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-export function LivrosChart() {
+export function BookChart() {
   return (
     <Card className="w-full border-none shadow-none">
       <CardHeader className="px-0">
