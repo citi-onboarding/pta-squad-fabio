@@ -1,9 +1,19 @@
-import { BookChart } from "@/components/ui/Chart/BookChart/bookChart";
+import Image from "next/image";
+import { LogoCITi } from "../assets";
 
 export default function Home() {
   return (
-    <div className="w-full max-w mx-auto px-8 pt-6 flex-1">
-      <BookChart />
+      <div className="flex flex-1 flex-col h-full justify-around items-center bg-black">
+      <div>
+        <Image src={LogoCITi} alt="Logo citi" />
+      </div>
+      <div className="flex flex-col justify-center items-center">
+        <h1 className="text-white text-4xl font-bold">NextJS Boilerplate</h1>
+        <p className="text-white text-xl">
+          Made with <strong>&lt; &#x0002F; &gt;</strong> and{" "}
+          <strong>&hearts;</strong> by CITi
+        </p>
+      </div>
     </div>
   );
 }
