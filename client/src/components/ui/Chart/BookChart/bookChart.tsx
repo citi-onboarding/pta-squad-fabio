@@ -42,12 +42,12 @@ const chartConfig = {
 
 export function BookChart() {
   return (
-    <Card className="w-full border-none shadow-none">
-      <CardHeader className="px-0">
+    <Card className="w-full">
+      <CardHeader>
         <CardTitle className="text-2xl font-semibold text-zinc-700">Livros por Categoria</CardTitle>
       </CardHeader>
-      <CardContent className="px-0">
-        <div className="h-[720px]">
+      <CardContent>
+        <div className="h-[400px]">
             <ChartContainer config={chartConfig} className="h-full w-full">
               <BarChart accessibilityLayer data={chartData}>
                 <CartesianGrid vertical={false} strokeDasharray="3 3" opacity={0.2} />
@@ -58,22 +58,22 @@ export function BookChart() {
                   tickLine={true}
                   tickMargin={10}
                   axisLine={true}
-                  className="text-xs text-zinc-500"
+                  tick={{ fontSize: 18, fill: "#71717a" }}
                 />
 
                 {/* Eixo Y - Quantidades */}
-                <YAxis 
+                <YAxis
                   tickLine={true}
                   axisLine={true}
                   tickMargin={10}
-                  className="text-xs text-zinc-500"
+                  tick={{ fontSize: 18, fill: "#71717a" }}
                 />
 
                 {/* Tooltip do Shadcn ao passar o rato */}
-                <ChartTooltip content={<ChartTooltipContent />} />
+                <ChartTooltip content={<ChartTooltipContent nameKey="categoria" hideIndicator={false} />} />
 
                 {/* Barras do gráfico aplicando as cores mapeadas */}
-                <Bar dataKey="quantidade" radius={[4, 4, 0, 0]} barSize={300}>
+                <Bar dataKey="quantidade" radius={[4, 4, 0, 0]}>
                   {chartData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.fill} />
                   ))}
