@@ -10,18 +10,18 @@ import React, {
 // TIPOS
 // ─────────────────────────────────────────────────────────────────
 export type Category =
-  | "Ficção"
-  | "Técnico"
-  | "Biografia"
+  | "Romance"
+  | "Tecnologia"
   | "História"
-  | "Ciência";
+  | "Ciências"
+  | "Infantil";
 
 export const CATEGORIES: Category[] = [
-  "Ficção",
-  "Técnico",
-  "Biografia",
+  "Romance",
+  "Tecnologia",
   "História",
-  "Ciência",
+  "Ciências",
+  "Infantil",
 ];
 
 interface SearchBarWithFilterProps {
@@ -166,8 +166,8 @@ export default function SearchBarWithFilter({
           aria-haspopup="listbox"
           aria-expanded={isDropdownOpen}
         >
-          <span className="text-sm font-normal text-slate-600">
-            {selectedCategory || "\u00A0"}
+          <span className={`text-sm font-normal ${selectedCategory ? "text-slate-600" : "text-slate-400"}`}>
+            {selectedCategory || "Categoria"}
           </span>
         </button>
 
@@ -190,13 +190,13 @@ export default function SearchBarWithFilter({
                     handleCategorySelect(cat)
                   }
                   className={`flex cursor-pointer items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] ${isActive
-                      ? "bg-blue-50 font-semibold text-blue-600"
+                      ? "bg-red-50 font-semibold text-red-600"
                       : "text-slate-600"
                     }`}
                 >
                   <span
                     className={`h-[7px] w-[7px] shrink-0 rounded-full ${isActive
-                        ? "bg-blue-500"
+                        ? "bg-red-500"
                         : "bg-slate-300"
                       }`}
                   />
