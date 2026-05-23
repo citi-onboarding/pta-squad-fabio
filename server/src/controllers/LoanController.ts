@@ -175,6 +175,8 @@ class LoanController implements Crud {
     getById = async (request: Request, response: Response) => {
         const { id } = request.params;
         const { httpStatus, value } = await this.citi.findById(id);
+        if (!value) return response.status(404).json({ message: "Empréstimo não encontrado." });
+        value.status = calcularStatus(value);
         return response.status(httpStatus).json(value);
     };
 }
