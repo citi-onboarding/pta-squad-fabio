@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import Header from "@/components/ui/Header";
-
-
-import "styles/globals.css";
+import "@/styles/globals.css";
 
 export const metadata: Metadata = {
   title: "Next.js Boilerplate",
