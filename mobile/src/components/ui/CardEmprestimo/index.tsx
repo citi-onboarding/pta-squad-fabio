@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Image, ImageRequireSource, useWindowDimensions } from "react-native";
+import { View, Text, Image, ImageRequireSource, useWindowDimensions, Platform } from "react-native";
 import CalendarIcon from "@assets/icons/calendar.svg";
 
 export type CategoriaLivro =
@@ -86,7 +86,22 @@ export default function CardEmprestimo({ emprestimo }: CardEmprestimoProps): Rea
   return (
     <View
       className="bg-white rounded-xl mx-4 my-2 flex-row items-start gap-3"
-      style={{ padding: 16, paddingLeft: HORIZONTAL_MARGIN, paddingRight: HORIZONTAL_MARGIN }}
+      style={{
+        padding: 16,
+        paddingLeft: HORIZONTAL_MARGIN,
+        paddingRight: HORIZONTAL_MARGIN,
+        ...Platform.select({
+          ios: {
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.15,
+            shadowRadius: 4,
+          },
+          android: {
+            elevation: 4,
+          },
+        }),
+      }}
     >
       <Image
         source={getCapaPorCategoria(livro.categoria)}
@@ -94,7 +109,7 @@ export default function CardEmprestimo({ emprestimo }: CardEmprestimoProps): Rea
         className="bg-gray-100"
         resizeMode="cover"
       />
-      <View className="flex-1">
+      <View className="flex-1 ">
         <Text numberOfLines={2} className="text-base font-barlowSemiBold text-black mb-1 leading-6">
           {livro.titulo}
         </Text>
