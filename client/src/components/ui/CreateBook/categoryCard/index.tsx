@@ -1,15 +1,17 @@
 "use client";
-
+import Image, { StaticImageData } from "next/image";
 import { Category } from "../types";
 
 interface CategoryCardProps {
   category: Category;
+  image: StaticImageData;
   selected: boolean;
   onSelect: (category: Category) => void;
 }
 
 export default function CategoryCard({
   category,
+  image,
   selected,
   onSelect,
 }: CategoryCardProps) {
@@ -17,19 +19,28 @@ export default function CategoryCard({
     <button
       type="button"
       onClick={() => onSelect(category)}
-      className={`flex flex-col items-center justify-end rounded-[5px] border pb-3 pt-0 transition-all cursor-pointer aspect-square ${selected
-          ? "border-red-400 bg-red-50"
-          : "border-slate-200 bg-white hover:border-slate-300"
-        }`}
-      aria-pressed={selected}
+      className={`
+        flex
+        flex-col
+        items-center
+        justify-center
+        rounded-lg
+        border
+        p-3
+        transition-all
+        ${selected
+          ? "border-red-500 bg-red-50"
+          : "border-slate-200 hover:border-slate-300"
+        }
+      `}
     >
-      <div className="flex-1 w-full" />
-      <span
-        className={`text-sm ${selected
-            ? "font-medium text-red-600"
-            : "font-normal text-slate-600"
-          }`}
-      >
+      <Image
+        src={image}
+        alt={category}
+        className="mb-2 h-24 w-16 object-cover"
+      />
+
+      <span className="text-sm text-slate-700">
         {category}
       </span>
     </button>

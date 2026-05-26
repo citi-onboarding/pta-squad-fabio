@@ -13,16 +13,6 @@ export const CATEGORIES: Category[] = [
   "Infantil",
 ];
 
-export interface BookFormData {
-  titulo: string;
-  autor: string;
-  isbn: string;
-  editora: string;
-  ano: string;
-  quantidade: string;
-  categoria: Category | "";
-}
-
 export interface BookFormErrors {
   titulo?: string;
   autor?: string;
