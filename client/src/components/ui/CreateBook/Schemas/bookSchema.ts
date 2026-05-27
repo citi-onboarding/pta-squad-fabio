@@ -29,7 +29,7 @@ export const bookSchema = z.object({
       "*Ano inválido."
     ),
 
-  quantidade: z
+  quantidadeTotal: z
     .string()
     .min(1, "*Quantidade é obrigatória.")
     .transform(Number)

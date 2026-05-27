@@ -27,7 +27,7 @@ export default function Input({
       formattedValue = inputValue.replace(/\D/g, "");
     }
 
-    
+
     if (variant === "isbn") {
       const digits = inputValue
         .replace(/\D/g, "")

@@ -29,7 +29,7 @@ export default function CadastrarNovoLivro() {
     isbn: "",
     editora: "",
     ano: "",
-    quantidade: "",
+    quantidadeTotal: "",
     categoria: "",
   });
 
@@ -114,6 +114,9 @@ async function handleSave() {
   const result =
     bookSchema.safeParse(formData);
 
+  console.log("formData:", formData);
+  console.log("result:", result);
+
   if (!result.success) {
     const fieldErrors: BookFormErrors = {};
 
@@ -151,7 +154,7 @@ async function handleSave() {
       isbn: "",
       editora: "",
       ano: "",
-      quantidade: "",
+      quantidadeTotal: "",
       categoria: "",
     });
 
@@ -225,9 +228,9 @@ async function handleSave() {
           <Input
             label="Quantidade"
             placeholder="Digite a quantidade "
-            value={formData.quantidade}
-            onChange={handleChange("quantidade")}
-            error={errors.quantidade}
+            value={formData.quantidadeTotal}
+            onChange={handleChange("quantidadeTotal")}
+            error={errors.quantidadeTotal}
             variant="number"
           />
         </div>
