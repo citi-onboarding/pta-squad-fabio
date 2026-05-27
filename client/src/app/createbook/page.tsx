@@ -263,7 +263,7 @@ export default function CadastrarNovoLivro() {
           <button
             type="button"
             onClick={handleSave}
-            className="rounded-[5px] bg-red-500 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-red-600"
+            className="bg-[#FF0000] rounded-[5px] px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#CC0000]"
           >
             Salvar Livro
           </button>
