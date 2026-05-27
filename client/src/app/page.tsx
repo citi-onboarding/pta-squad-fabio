@@ -15,6 +15,5 @@ export default function Home() {
           <strong>&hearts;</strong> by CITi
         </p>
       </div>
-    </div>
-  );
+      </div>)
 }
