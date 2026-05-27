@@ -121,7 +121,8 @@ export default function Header() {
             <span>Livros</span>
           </Link>
 
-          <button
+          <Link
+            href="/createbook"
             className="flex items-center bg-green-500 hover:bg-green-600 active:bg-green-700 text-white font-medium rounded-md transition-colors whitespace-nowrap shrink-0"
             style={{
               gap: isUltrawide ? "12px" : isCompactMobile ? "2px" : isMobile ? "4px" : "8px",
@@ -149,7 +150,7 @@ export default function Header() {
               height={isUltrawide ? 22 : isCompactMobile ? 12 : isMobile ? 14 : 16}
             />
             <span>Novo Livro</span>
-          </button>
+          </Link>
         </nav>
       </div>
     </header>
