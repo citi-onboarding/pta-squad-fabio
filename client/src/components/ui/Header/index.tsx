@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { LogoCITi, house, book, plus } from "@/assets";
+import { LogoCITi_red, house_red, book_red, plus } from "@/assets";
 
 function useScreenSize() {
   const [size, setSize] = useState<
@@ -37,9 +37,9 @@ export default function Header() {
   const isMobile = screen === "mobile";
 
   const navLinkClass = (path: string) =>
-    `flex items-center transition-colors rounded-md font-medium ${
+    `flex items-center transition-all duration-200 rounded-md font-medium ${
       pathname === path
-        ? "bg-green-50 text-green-600"
+        ? "text-red-600 bg-red-50 shadow-sm ring-1 ring-red-200"
         : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
     } ${
       isUltrawide
@@ -80,7 +80,7 @@ export default function Header() {
             }}
           >
             <Image
-              src={LogoCITi}
+              src={LogoCITi_red}
               alt="CITi Logo"
               fill
               style={{ objectFit: "contain" }}
@@ -103,7 +103,7 @@ export default function Header() {
         >
           <Link href="/" className={navLinkClass("/")}>
             <Image
-              src={house}
+              src={house_red}
               alt=""
               width={isUltrawide ? 22 : 16}
               height={isUltrawide ? 22 : 16}
@@ -113,7 +113,7 @@ export default function Header() {
 
           <Link href="/livros" className={navLinkClass("/livros")}>
             <Image
-              src={book}
+              src={book_red}
               alt=""
               width={isUltrawide ? 22 : 16}
               height={isUltrawide ? 22 : 16}
@@ -123,8 +123,9 @@ export default function Header() {
 
           <Link
             href="/createbook"
-            className="flex items-center bg-green-500 hover:bg-green-600 active:bg-green-700 text-white font-medium rounded-md transition-colors whitespace-nowrap shrink-0"
+            className="flex items-center text-white font-medium rounded-md transition-colors whitespace-nowrap shrink-0"
             style={{
+              backgroundColor: "#FF0000",
               gap: isUltrawide ? "12px" : isCompactMobile ? "2px" : isMobile ? "4px" : "8px",
               padding: isUltrawide
                 ? "12px 28px"
@@ -142,6 +143,10 @@ export default function Header() {
                 : "14px",
               marginLeft: isUltrawide ? "16px" : "8px",
             }}
+            onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#CC0000")}
+            onMouseLeave={e => (e.currentTarget.style.backgroundColor = "#FF0000")}
+            onMouseDown={e => (e.currentTarget.style.backgroundColor = "#990000")}
+            onMouseUp={e => (e.currentTarget.style.backgroundColor = "#CC0000")}
           >
             <Image
               src={plus}
