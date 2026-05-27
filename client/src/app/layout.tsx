@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import Header from "@/components/ui/Header";
 import "@/styles/globals.css";
+import QueryProvider from "@/integration/queryProvider";
+
+import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
   title: "Next.js Boilerplate",
@@ -14,10 +17,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html>
+    <html lang="pt-BR">
       <body>
+        <QueryProvider>
           <Header />
-        {children}
+          {children}
+
+          <Toaster
+            position="top-right"
+            reverseOrder={false}
+          />
+        </QueryProvider>
       </body>
     </html>
   );

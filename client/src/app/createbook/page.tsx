@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Input from "@/components/ui/CreateBook/input";
+import Input from "@/components/ui/CreateBook/input/index";
 import CategoryCard from "@/components/ui/CreateBook/categoryCard";
 import RomanceCover from "@/assets/Covers/Romance.png";
 import TecnologiaCover from "@/assets/Covers/Tecnologia.png";
@@ -9,13 +9,13 @@ import HistoriaCover from "@/assets/Covers/Historia.png";
 import CienciasCover from "@/assets/Covers/Ciencias.png";
 import InfantilCover from "@/assets/Covers/Infantil.png";
 import { useRouter } from "next/navigation";
-
+import { useCreateBook } from "@/integration/useCreateBook";
 import {
   CATEGORIES,
   Category,
   BookFormErrors,
 } from "@/components/ui/CreateBook/types";
-
+import toast from "react-hot-toast";
 import {
   bookSchema,
   BookFormData,
@@ -83,6 +83,8 @@ export default function CadastrarNovoLivro() {
   function validate(): boolean {
     const result = bookSchema.safeParse(formData);
 
+    console.log(result);
+
     if (!result.success) {
       const fieldErrors: BookFormErrors = {};
 
@@ -103,41 +105,44 @@ export default function CadastrarNovoLivro() {
     return true;
   }
 
-  function handleSave() {
-    const result = bookSchema.safeParse(formData);
+const createBookMutation =
+  useCreateBook();
 
-    if (!result.success) {
-      const fieldErrors: BookFormErrors = {};
+async function handleSave() {
 
-      result.error.issues.forEach((issue) => {
-        const field =
-          issue.path[0] as keyof BookFormErrors;
+  console.log("click detectado");
+  const result =
+    bookSchema.safeParse(formData);
 
-        fieldErrors[field] = issue.message;
-      });
+  if (!result.success) {
+    const fieldErrors: BookFormErrors = {};
 
-      setErrors(fieldErrors);
+    result.error.issues.forEach((issue) => {
+      const field =
+        issue.path[0] as keyof BookFormErrors;
 
-      return;
-    }
+      fieldErrors[field] = issue.message;
+    });
 
-    const payload: BookPayload = result.data;
+    setErrors(fieldErrors);
 
-    console.log("Livro validado:", payload);
-
-    /*
-      payload:
-      {
-        titulo: string
-        autor: string
-        isbn: string
-        editora: string
-        ano: number
-        quantidade: number
-        categoria: string
-      }
-    */
+    return;
   }
+
+  const payload: BookPayload =
+    result.data;
+
+  try {
+    await createBookMutation.mutateAsync(
+      payload
+    );
+    toast.success("Livro cadastrado com sucesso!");
+    console.log("Livro criado");
+  } catch (error) {
+    toast.error("Erro ao cadastrar o livro. \n Tente novamente.");
+    console.error(error);
+  }
+}
 
   function handleCancel() {
     setFormData({

@@ -37,7 +37,7 @@ export default function CategoryCard({
       <Image
         src={image}
         alt={category}
-        className="mb-2 h-24 w-16 object-cover"
+        className="mb-2 h-24 w-24 object-contain"
       />
 
       <span className="text-sm text-slate-700">

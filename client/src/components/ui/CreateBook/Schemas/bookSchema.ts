@@ -25,7 +25,7 @@ export const bookSchema = z.object({
     .min(1, "*Ano é obrigatório.")
     .transform(Number)
     .refine(
-      (value) => !isNaN(value) || value <= 0,
+      (value) => !isNaN(value) && value > 0,
       "*Ano inválido."
     ),
 
