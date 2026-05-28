@@ -113,7 +113,7 @@ async function handleSave() {
   console.log("click detectado");
   const result =
     bookSchema.safeParse(formData);
-
+  //debug: log do formData e do resultado da validação
   console.log("formData:", formData);
   console.log("result:", result);
 
@@ -136,6 +136,8 @@ async function handleSave() {
     result.data;
 
   try {
+    const treatedIsbn = payload.isbn.replace(/-/g, "");
+    payload.isbn = treatedIsbn;
     await createBookMutation.mutateAsync(
       payload
     );
