@@ -116,7 +116,6 @@ class LoanController implements Crud {
     getAnalytics = async (request:Request, response:Response) =>{
         try{
             /* Manter em comentário até realmente começar a usar os dados do bdd
-            // SIMULANDO DADOS MOCKADOS
             const emprestimosReais = await prisma.emprestimo.findMany({
                 include:{
                     livro:true
