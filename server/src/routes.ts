@@ -9,6 +9,8 @@ routes.get("/book", bookController.get);
 routes.get("/book/:id", bookController.getById)
 routes.delete("/book/:id", bookController.delete);
 
+
+routes.get("/loans/analytics", LoanController.getAnalytics);
 routes.post("/loans", LoanController.create);
 routes.get("/loans", LoanController.get);
 routes.get("/loans/:id", LoanController.getById);
