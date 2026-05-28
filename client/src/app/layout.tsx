@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-
-import "styles/globals.css";
+import Header from "@/components/ui/Header";
+import "@/styles/globals.css";
 
 export const metadata: Metadata = {
   title: "Next.js Boilerplate",
@@ -15,7 +15,10 @@ export default function RootLayout({
 }) {
   return (
     <html>
-      <body>{children}</body>
+      <body>
+          <Header />
+        {children}
+      </body>
     </html>
   );
 }
