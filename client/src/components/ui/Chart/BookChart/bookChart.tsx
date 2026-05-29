@@ -27,7 +27,8 @@ export function BookChart() {
     async function carregarDados() {
       try {
         setLoading(true)
-        const response = await axios.get<RespostaAnalytics>("http://localhost:3001/loans/analytics")
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001"
+        const response = await axios.get<RespostaAnalytics>(`${baseUrl}/loans/analytics`)
         const data = response.data
 
         // Injeta as propriedades de cor (fill) dinamicamente baseada na categoria
