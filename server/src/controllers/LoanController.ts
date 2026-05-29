@@ -179,6 +179,26 @@ class LoanController implements Crud {
         value.status = calcularStatus(value);
         return response.status(httpStatus).json(value);
     };
+
+    getByLivroId = async (request: Request, response: Response) => {
+        const { livroId } = request.params;
+        try {
+            const emprestimos = await prisma.emprestimo.findMany({
+                where: { livroId },
+                include: { livro: true }
+            });
+            if (emprestimos.length === 0) {
+                return response.status(200).json([]);
+            }
+            const resultado = emprestimos.map((emp) => {
+                emp.status = calcularStatus(emp);
+                return emp;
+            });
+            return response.status(200).json(resultado);
+        } catch (error) {
+            return response.status(500).json({ error: "Erro ao buscar empréstimos do livro." });
+        }
+    };
 }
 
 export default new LoanController();
