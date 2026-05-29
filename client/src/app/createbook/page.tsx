@@ -30,8 +30,8 @@ import { createBook } from "@/services/bookService";
 
 const ROUTES = {
   HOME: "/",
-  DASHBOARD: "/", //posteriormente, quando tiver a dashboard, alterar para lá
-  LIVRO:  "/livros", // rota para detalhes do livro, ex: /livro/123
+  DASHBOARD: "/DashBoardPage",
+  LIVRO:  "/livros",
 };
 
 const INITIAL_FORM_DATA: BookFormData = {
