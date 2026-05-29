@@ -11,10 +11,12 @@ export const bookSchema = z.object({
 
   isbn: z
     .string()
-    .regex(
-      /^\d{3}-\d{2}-\d{3}-\d{4}-\d$/,
-      "*ISBN inválido."
-    ),
+    .min(1, "*ISBN é obrigatório.")
+    .refine((value) => {
+      // Remove tudo que não é dígito para contar
+      const digitsOnly = value.replace(/\D/g, "");
+      return digitsOnly.length === 10 || digitsOnly.length === 13;
+    }, "*ISBN deve ter 10 ou 13 dígitos."),
 
   editora: z
     .string()
@@ -25,7 +27,7 @@ export const bookSchema = z.object({
     .min(1, "*Ano é obrigatório.")
     .transform(Number)
     .refine(
-      (value) => !isNaN(value) || value <= 0,
+      (value) => !isNaN(value) && value > 0,
       "*Ano inválido."
     ),
 
