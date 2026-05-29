@@ -113,6 +113,65 @@ class LoanController implements Crud {
         return response.status(200).json(resultado);
     };
 
+    getAnalytics = async (request:Request, response:Response) =>{
+        try{
+            /* Manter em comentário até realmente começar a usar os dados do bdd
+            const emprestimosReais = await prisma.emprestimo.findMany({
+                include:{
+                    livro:true
+                }
+            });
+            const estruturaSemestres: Record<string, Record<string, number>> = {};
+
+            emprestimosReais.forEach((emp: any) => {
+            // Usamos o campo 'dataLocacao' real salvo pelo Prisma no banco
+            const data = new Date(emp.dataLocacao); 
+            const ano = data.getFullYear();
+            const mes = data.getMonth() + 1; 
+
+            const semestreCalculado = mes <= 6 ? `${ano}.1` : `${ano}.2`;
+            const categoria = emp.livro?.categoria || "Outros";
+
+            if (!estruturaSemestres[semestreCalculado]) {
+                estruturaSemestres[semestreCalculado] = {};
+            }
+
+            estruturaSemestres[semestreCalculado][categoria] = 
+                (estruturaSemestres[semestreCalculado][categoria] || 0) + 1;
+            });
+
+            const resultadoFinal: Record<string, { categoria: string; quantidade: number }[]> = {};
+
+            Object.entries(estruturaSemestres).forEach(([semestre, categorias]) => {
+            resultadoFinal[semestre] = Object.entries(categorias).map(([categoria, quantidade]) => ({
+                categoria,
+                quantidade
+                }));
+            });*/
+
+            const resultadoFinal:Record<string, { categoria: string; quantidade: number }[]> = {
+            "2026.1": [
+                { categoria: "Romance", quantidade: 245 },
+                { categoria: "Tecnologia", quantidade: 315 },
+                { categoria: "História", quantidade: 185 },
+                { categoria: "Ciências", quantidade: 270 },
+                { categoria: "Infantil", quantidade: 230 }
+            ],
+            "2025.2": [
+                { categoria: "Romance", quantidade: 110 },
+                { categoria: "Tecnologia", quantidade: 180 },
+                { categoria: "História", quantidade: 90 }
+                ]
+            };
+
+            // Retorna o objeto gerado dinamicamente com os dados do cliente
+            return response.status(200).json(resultadoFinal);
+        }
+        catch(error){
+            return response.status(500).json({ error: "Erro interno do servidor." });
+        }
+    }
+
     // Patch /loans/:id/devolver
     update = async (request: Request, response: Response) => {
         const { id } = request.params;
