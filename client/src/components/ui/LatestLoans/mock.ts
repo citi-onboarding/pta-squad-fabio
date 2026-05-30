@@ -1,4 +1,4 @@
-import type { Loan} from "./index";
+import type { Loan } from "./index";
 
 export const latestLoansMock: Loan[] = [
   {
@@ -48,5 +48,53 @@ export const latestLoansMock: Loan[] = [
     loanDate: "19/04/2026",
     returnDate: "26/04/2026",
     status: "Atrasado",
+  },
+  {
+    id: 7,
+    book: "A Revolução dos Bichos",
+    client: "Beatriz Rocha",
+    loanDate: "25/04/2026",
+    returnDate: "02/05/2026",
+    status: "Em andamento",
+  },
+  {
+    id: 8,
+    book: "1984",
+    client: "Rafael Gomes",
+    loanDate: "21/04/2026",
+    returnDate: "28/04/2026",
+    status: "Devolvido",
+  },
+  {
+    id: 9,
+    book: "O Hobbit",
+    client: "Fernanda Alves",
+    loanDate: "26/04/2026",
+    returnDate: "03/05/2026",
+    status: "Em andamento",
+  },
+  {
+    id: 10,
+    book: "Algoritmos",
+    client: "Marcos Lima",
+    loanDate: "17/04/2026",
+    returnDate: "24/04/2026",
+    status: "Atrasado",
+  },
+  {
+    id: 11,
+    book: "Design Patterns",
+    client: "Juliana Ferreira",
+    loanDate: "23/04/2026",
+    returnDate: "30/04/2026",
+    status: "Devolvido",
+  },
+  {
+    id: 12,
+    book: "Memórias Póstumas de Brás Cubas",
+    client: "Gustavo Henrique",
+    loanDate: "27/04/2026",
+    returnDate: "04/05/2026",
+    status: "Em andamento",
   },
 ];

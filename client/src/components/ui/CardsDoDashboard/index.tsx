@@ -1,6 +1,6 @@
 "use client"
 import Image from "next/image";
-import { exclamation, clock, book} from "@/assets"
+import { circle_alert, clock_red, book_red } from "@/assets"
 
 
 type DashboardCardProps = {
@@ -32,7 +32,7 @@ function DashboardCard({
          </p>
 
 
-         <h2 className="text-1xl font-bold text-gray-700 leading-none">
+         <h2 className="text-xl font-bold text-gray-700 leading-none">
            {value}
          </h2>
        </div>
@@ -59,23 +59,23 @@ export default function CardsDashboard() {
      <DashboardCard
        title="Total de Livros"
        value={totalLivros}
-       icon={<Image src={book} alt="Livro" width={24} height={24} />}
-       bgColor="bg-green-100"
+       icon={<Image src={book_red} alt="Livro" width={24} height={24} />}
+       bgColor="bg-red-100"
      />
 
 
      <DashboardCard
        title="Empréstimos Ativos"
        value={emprestimosAtivos}
-       icon={<Image src={clock} alt="Relógio" width={24} height={24} />}
-       bgColor="bg-emerald-100"
+       icon={<Image src={clock_red} alt="Relógio" width={24} height={24} />}
+       bgColor="bg-red-100"
      />
 
 
      <DashboardCard
        title="Livros Atrasados"
        value={livrosAtrasados}
-       icon={<Image src={exclamation} alt="Exclamação" width={24} height={24} />}
+       icon={<Image src={circle_alert} alt="Alerta" width={24} height={24} />}
        bgColor="bg-red-100"
      />
 

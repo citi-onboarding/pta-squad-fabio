@@ -1,3 +1,9 @@
+"use client";
+
+import { useState } from "react";
+import Image from "next/image";
+import { chevron_left, chevron_right } from "@/assets";
+
 type LoanStatus = "Em andamento" | "Atrasado" | "Devolvido";
 
 export type Loan = {
@@ -30,13 +36,74 @@ function StatusBadge({ status }: { status: LoanStatus }) {
 }
 
 export default function LatestLoans({ loans }: { loans: Loan[] }) {
-  const latest = loans.slice(-4).reverse();
+  const [page, setPage] = useState(0);
+
+  const loansPerPage = 4;
+
+  // Invertendo a ordem para mostrar os mais recentes primeiro
+  const orderedLoans = [...loans].reverse();
+
+  // Calculando o total de páginas 
+  const totalPages = Math.ceil(orderedLoans.length / loansPerPage);
+
+  // Define quais os empréstimos da página atual
+  const visibleLoans = orderedLoans.slice(
+    page * loansPerPage,
+    page * loansPerPage + loansPerPage
+  );
+
+  const canGoBack = page > 0;
+  const canGoForward = page < totalPages - 1;
 
   return (
     <section className="flex w-full flex-col gap-6 rounded-lg border-[0.83px] border-[#D9E2E8] bg-white px-4 pb-6 pt-6 shadow-[0px_2px_4px_-2px_#0000001A,0px_4px_6px_-1px_#0000001A] sm:px-[24.83px] sm:pb-[24.83px] sm:pt-[24.83px] md:min-h-[344.73px]">
-      <h3 className="text-[20px] font-semibold leading-6 text-[#0B0F19]">
-        Últimos Empréstimos
-      </h3>
+      <div className="flex items-center justify-between gap-4">
+        <h3 className="text-[20px] font-semibold leading-6 text-[#0B0F19]">
+          Últimos Empréstimos
+        </h3>
+
+        {totalPages > 1 && (
+          <div className="flex items-center gap-3">
+            <span className="text-sm font-medium text-gray-500">
+              {page + 1} de {totalPages}
+            </span>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                disabled={!canGoBack}
+                onClick={() => setPage(page - 1)}
+                aria-label="Ver empréstimos anteriores"
+                className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-100 shadow-sm transition hover:bg-red-200 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:shadow-none"
+              >
+                <Image
+                  src={chevron_left}
+                  alt=""
+                  width={18}
+                  height={18}
+                  className={canGoBack ? "opacity-100" : "opacity-30"}
+                />
+              </button>
+
+              <button
+                type="button"
+                disabled={!canGoForward}
+                onClick={() => setPage(page + 1)}
+                aria-label="Ver próximos empréstimos"
+                className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-100 shadow-sm transition hover:bg-red-200 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:shadow-none"
+              >
+                <Image
+                  src={chevron_right}
+                  alt=""
+                  width={18}
+                  height={18}
+                  className={canGoForward ? "opacity-100" : "opacity-30"}
+                />
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Tabela --> desktop */}
       <div className="hidden md:block overflow-x-auto">
@@ -51,7 +118,7 @@ export default function LatestLoans({ loans }: { loans: Loan[] }) {
             </tr>
           </thead>
           <tbody>
-            {latest.map((loan) => (
+            {visibleLoans.map((loan) => (
               <tr
                 key={getLoanKey(loan)}
                 className="h-[48.82px] border-b border-[#D9E2E8]"
@@ -71,7 +138,7 @@ export default function LatestLoans({ loans }: { loans: Loan[] }) {
 
       {/* Cards --> mobile */}
       <div className="flex flex-col gap-3 md:hidden">
-        {latest.map((loan) => (
+        {visibleLoans.map((loan) => (
           <div
             key={getLoanKey(loan)}
             className="rounded-md border border-[#D9E2E8] p-3"
