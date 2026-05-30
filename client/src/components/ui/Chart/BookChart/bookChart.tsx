@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import axios from "axios"
+import { api } from "@/services/api"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Cell } from "recharts"
 import { Card, CardContent, CardHeader, CardTitle } from "../card"
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "../chart"
@@ -28,7 +28,7 @@ export function BookChart() {
       try {
         setLoading(true)
         const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001"
-        const response = await axios.get<RespostaAnalytics>(`${baseUrl}/loans/analytics`)
+        const response = await api.get<RespostaAnalytics>(`${baseUrl}/loans/analytics`)
         const data = response.data
 
         // Injeta as propriedades de cor (fill) dinamicamente baseada na categoria
