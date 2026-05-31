@@ -2,9 +2,8 @@ import React from 'react'
 import {View, TextInput, TouchableOpacity, Text} from 'react-native'
 import { useState } from 'react'
 
-export function SearchBar(){
+export default function SearchBar(){
     const [textoBusca, setTextoBusca] = useState('')
-
     return(
         <View>
             <TextInput
