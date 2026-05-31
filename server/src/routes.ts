@@ -16,5 +16,6 @@ routes.get("/loans", LoanController.get);
 routes.get("/loans/:id", LoanController.getById);
 routes.patch("/loans/:id", LoanController.update);
 routes.delete("/loans/:id", LoanController.delete);
+routes.get("/loans/book/:livroId", LoanController.getByLivroId);
 
 export default routes;
