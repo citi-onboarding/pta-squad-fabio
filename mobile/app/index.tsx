@@ -1,6 +1,7 @@
 import React from 'react';
 import { FlatList, View } from 'react-native';
-import { CardEmprestimo, type Emprestimo } from '@components';
+import { CardEmprestimo, type Emprestimo, Header } from '@components';
+import { SearchBar } from '@components';
 
 // Mockando dados para desenvolvimento
 const EMPRESTIMOS_MOCK: Emprestimo[] = [
@@ -73,6 +74,14 @@ const App: React.FC = () => (
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => <CardEmprestimo emprestimo={item} />}
       contentContainerStyle={{ paddingVertical: 16 }}
+      ListHeaderComponent={
+      <View>
+        <Header/>
+        <View className='m-4'>
+          <SearchBar/>
+        </View>
+      </View>}
+      
     />
   </View>
 );
