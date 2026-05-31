@@ -13,6 +13,7 @@ export type Loan = {
   loanDate: string;
   returnDate: string;
   status: LoanStatus;
+  sortDate?: string; // Data original para ordenação (não é exibida)
 };
 
 const statusStyles: Record<LoanStatus, string> = {
@@ -23,6 +24,14 @@ const statusStyles: Record<LoanStatus, string> = {
 
 function getLoanKey(loan: Loan) {
   return loan.id ?? `${loan.book}-${loan.client}-${loan.loanDate}`;
+}
+
+function parseDate(date: string) {
+  if (date.includes("/")) {
+    const [day, month, year] = date.split("/").map(Number);
+    return new Date(year, month - 1, day).getTime();
+  }
+  return new Date(date).getTime();
 }
 
 function StatusBadge({ status }: { status: LoanStatus }) {
@@ -40,8 +49,10 @@ export default function LatestLoans({ loans }: { loans: Loan[] }) {
 
   const loansPerPage = 4;
 
-  // Invertendo a ordem para mostrar os mais recentes primeiro
-  const orderedLoans = [...loans].reverse();
+  // Ordena pela data de locação, mostrando os empréstimos mais recentes primeiro
+  const orderedLoans = [...loans].sort(
+    (a, b) => parseDate(b.sortDate ?? b.loanDate) - parseDate(a.sortDate ?? a.loanDate)
+  );
 
   // Calculando o total de páginas 
   const totalPages = Math.ceil(orderedLoans.length / loansPerPage);

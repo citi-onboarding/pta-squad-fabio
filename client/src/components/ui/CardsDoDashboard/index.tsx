@@ -10,6 +10,12 @@ type DashboardCardProps = {
  bgColor: string
 }
 
+type CardsDashboardProps = {
+ totalLivros: number
+ emprestimosAtivos: number
+ livrosAtrasados: number
+}
+
 function DashboardCard({
  title,
  value,
@@ -44,12 +50,11 @@ function DashboardCard({
 }
 
 
-export default function CardsDashboard() {
-
-
- const totalLivros = "1,245"
- const emprestimosAtivos = 87
- const livrosAtrasados = 12
+export default function CardsDashboard({
+ totalLivros,
+ emprestimosAtivos,
+ livrosAtrasados,
+}: CardsDashboardProps) {
 
 
  return (

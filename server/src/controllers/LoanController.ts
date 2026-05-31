@@ -113,18 +113,17 @@ class LoanController implements Crud {
         return response.status(200).json(resultado);
     };
 
-    getAnalytics = async (request:Request, response:Response) =>{
+    getAnalytics = async (_request: Request, response: Response) =>{
         try{
-            /* Manter em comentário até realmente começar a usar os dados do bdd
             const emprestimosReais = await prisma.emprestimo.findMany({
                 include:{
                     livro:true
                 }
             });
+
             const estruturaSemestres: Record<string, Record<string, number>> = {};
 
             emprestimosReais.forEach((emp: any) => {
-            // Usamos o campo 'dataLocacao' real salvo pelo Prisma no banco
             const data = new Date(emp.dataLocacao); 
             const ano = data.getFullYear();
             const mes = data.getMonth() + 1; 
@@ -147,22 +146,7 @@ class LoanController implements Crud {
                 categoria,
                 quantidade
                 }));
-            });*/
-
-            const resultadoFinal:Record<string, { categoria: string; quantidade: number }[]> = {
-            "2026.1": [
-                { categoria: "Romance", quantidade: 245 },
-                { categoria: "Tecnologia", quantidade: 315 },
-                { categoria: "História", quantidade: 185 },
-                { categoria: "Ciências", quantidade: 270 },
-                { categoria: "Infantil", quantidade: 230 }
-            ],
-            "2025.2": [
-                { categoria: "Romance", quantidade: 110 },
-                { categoria: "Tecnologia", quantidade: 180 },
-                { categoria: "História", quantidade: 90 }
-                ]
-            };
+            });
 
             // Retorna o objeto gerado dinamicamente com os dados do cliente
             return response.status(200).json(resultadoFinal);
