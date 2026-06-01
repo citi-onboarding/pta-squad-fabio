@@ -18,7 +18,7 @@ const processEmailJob = async (job: Job<EmailJobData>) => {
     console.log(`[EmailWorker] Empréstimo ${loanId} não existe mais, pulando.`);
     return;
   }
-
+  
   await sendMail(loanWithBook);
 
   await prisma.outboxEvent.updateMany({
