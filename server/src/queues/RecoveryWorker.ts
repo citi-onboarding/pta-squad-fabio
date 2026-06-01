@@ -1,8 +1,25 @@
-// src/workers/RecoveryWorker.ts
 import { Worker, Queue } from "bullmq";
 import { redisConfig } from "../config/RedisConfig";
 import { prisma } from "../database";
 import { emailJobQueue } from "../queues/EmailJobQueue";
+/**
+ * RecoveryWorker.ts
+ *
+ * Worker de recuperação responsável por reprocessar jobs de e-mail
+ * que foram marcados como processados no Outbox, mas cujo envio falhou
+ * (emailEnviado: false).
+ *
+ * Fluxo:
+ * 1. Ao iniciar, agenda um job recorrente na fila "recovery-check"
+ *    com execução a cada 12 horas (cron: "0 *\/12 * * *").
+ * 2. A cada execução, consulta o banco buscando eventos do tipo "send-mail"
+ *    que foram processados mas não tiveram o e-mail efetivamente enviado.
+ * 3. Para cada evento perdido, recalcula o delay com base na
+ *    `dataPrevistaDevolucao` e re-adiciona o job na fila "mail-notification".
+ * 4. O `jobId` fixo (`send-mail-{loanId}`) evita duplicatas na fila.
+ *
+ * Atua como mecanismo de fallback/resiliência do sistema de notificações.
+ */
 
 const recoveryQueue = new Queue("recovery-check", { connection: redisConfig });
 

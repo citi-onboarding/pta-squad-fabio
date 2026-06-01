@@ -24,7 +24,7 @@ class MailController {
     try {
     await sendOverdueBookMail(loan);
     return res.status(200).json({ message: "Email enviado com sucesso" });
-    
+
   } catch (error) {
     console.error("Erro ao enviar email:", error);
     return res.status(500).json({ message: "Erro ao enviar email" });
