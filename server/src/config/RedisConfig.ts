@@ -1,14 +1,12 @@
 import IORedis, { RedisOptions } from "ioredis";
 
-const redisConfig: RedisOptions = {
+export const redisConfig: RedisOptions = {
   host: process.env.REDIS_HOST || "redis",
   port: parseInt(process.env.REDIS_PORT || "6379"),
   maxRetriesPerRequest: null,
   enableReadyCheck: false,
   retryStrategy(times) {
-    const delay = Math.min(times * 50, 2000);
-    console.log(`Redis retry: ${times}`);
-    return delay;
+    return Math.min(times * 50, 2000);
   },
 };
 

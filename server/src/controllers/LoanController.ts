@@ -2,8 +2,9 @@ import { Request , Response } from 'express';
 import { Citi, Crud } from "../global";
 import prisma from "@database"
 import { StatusEmprestimo, Emprestimo } from '@prisma/client';
+import { emailJobQueue } from '../queues/EmailJobQueue';
 
-// Calcula o status do empréstimo 
+// Calcula o status do empréstimo
 export const calcularStatus = (emprestimo: Emprestimo): StatusEmprestimo => {
     if (emprestimo.status === "DEVOLVIDO") return "DEVOLVIDO";
     if (new Date() > new Date(emprestimo.dataPrevistaDevolucao)) return "ATRASADO";
@@ -52,11 +53,11 @@ class LoanController implements Crud {
 
         // Verificar se o Livro existe
         const { value: livroExistente } = await this.citiLivro.findById(livroId);
-    
+
         if (!livroExistente) {
             return response.status(404).json({ error: "Livro não encontrado." });
         }
-        
+
         // Verificar se o Livro está disponível para empréstimo
         if (livroExistente.quantidadeDisponivel <= 0) {
             return response.status(409).json({ error: "Livro indisponível para empréstimo." });
@@ -72,11 +73,12 @@ class LoanController implements Crud {
             status: "EM_ANDAMENTO" as StatusEmprestimo,
         };
 
+        //uso de try/catch para garantir idempotencia
+        try {
         const { httpStatus, message } = await this.citi.insertIntoDatabase(novoEmprestimo);
-
-        if (httpStatus !== 201) {
+                if (httpStatus !== 201) {
             return response.status(httpStatus).json({ error: message });
-        }
+        };
 
         // Decrementar a quantidade disponível do livro
         await prisma.livro.update({
@@ -84,8 +86,28 @@ class LoanController implements Crud {
             data: { quantidadeDisponivel: { decrement: 1 } },
         });
 
+        //idealmente o id, deveria vir junto com o insert
+        const loanId = await prisma.emprestimo.findFirst({
+            where: {
+                livroId,
+                emailCliente,
+                dataLocacao,
+                dataPrevistaDevolucao: dataDevolucao,
+            },
+        }).then(emp => emp?.id);
+
+        if (!loanId) {
+            console.error("Erro ao recuperar o ID do empréstimo recém-criado.");
+            return response.status(500).json({ error: "Erro interno do servidor." });
+        }
+
+        emailJobQueue.add("send-mail", {loanId});
         return response.status(201).json({ message });
-        
+
+        }catch(error){
+            console.error("Erro ao criar empréstimo:", error);
+            return response.status(500).json({ error: "Erro interno do servidor." });
+        }
     };
 
     // Get /loans
@@ -125,9 +147,9 @@ class LoanController implements Crud {
 
             emprestimosReais.forEach((emp: any) => {
             // Usamos o campo 'dataLocacao' real salvo pelo Prisma no banco
-            const data = new Date(emp.dataLocacao); 
+            const data = new Date(emp.dataLocacao);
             const ano = data.getFullYear();
-            const mes = data.getMonth() + 1; 
+            const mes = data.getMonth() + 1;
 
             const semestreCalculado = mes <= 6 ? `${ano}.1` : `${ano}.2`;
             const categoria = emp.livro?.categoria || "Outros";
@@ -136,7 +158,7 @@ class LoanController implements Crud {
                 estruturaSemestres[semestreCalculado] = {};
             }
 
-            estruturaSemestres[semestreCalculado][categoria] = 
+            estruturaSemestres[semestreCalculado][categoria] =
                 (estruturaSemestres[semestreCalculado][categoria] || 0) + 1;
             });
 
@@ -175,43 +197,43 @@ class LoanController implements Crud {
     // Patch /loans/:id/devolver
     update = async (request: Request, response: Response) => {
         const { id } = request.params;
- 
+
         // Busca o empréstimo
         const { value: emprestimo } = await this.citi.findById(id);
 
         if (!emprestimo) {
             return response.status(404).json({ message: "Empréstimo não encontrado." });
         }
-    
+
         if (emprestimo.status === "DEVOLVIDO") {
             return response.status(409).json({ message: "Este empréstimo já foi finalizado." });
         }
-    
+
         await this.citi.updateValue(id, { status: "DEVOLVIDO" });
-    
+
         // Prisma direto: Citi.updateValue não suporta { increment: 1 } atômico
         await prisma.livro.update({
             where: { id: emprestimo.livroId },
             data: { quantidadeDisponivel: { increment: 1 } },
         });
-    
+
         return response.status(200).json({ message: "Empréstimo finalizado com sucesso." });
     };
 
     //Delete /loans/:id
     delete = async (request: Request, response: Response) => {
         const { id } = request.params;
-    
-        // Busca o empréstimo 
+
+        // Busca o empréstimo
         const { value: emprestimo } = await this.citi.findById(id);
 
         if (!emprestimo) {
             return response.status(404).json({ message: "Empréstimo não encontrado." });
         }
-    
+
         // Só incrementa se ainda não estava devolvido (evita incrementar duas vezes)
         const deveIncrementar = emprestimo.status !== "DEVOLVIDO";
-    
+
         // Remove — via Citi
         const { httpStatus, messageFromDelete } = await this.citi.deleteValue(id);
 

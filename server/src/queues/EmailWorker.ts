@@ -1,10 +1,12 @@
 import { Worker, Job } from "bullmq";
 import nodemailer from "nodemailer";
-import { createRedisConnection } from "../config/RedisConfig";
-import { EmailJobData } from "..EmailJobQueue";
-import prisma from "@database";
+import { createRedisConnection, redisConfig } from "../config/RedisConfig";
+import { EmailJobData } from "../queues/EmailJobQueue";
 import { calcularStatus } from "../controllers/LoanController";
-import Citi from "@global/Citi";
+import Citi from "../global/Citi";
+import { sendEmail } from "../service/MailService";
+import type { Emprestimo } from "@prisma/client";
+import { getLoan, LoanReturnType } from "../service/LoanService";
 
 export const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
@@ -22,21 +24,19 @@ export const transporter = nodemailer.createTransport({
 });
 
 const processEmailJob = async (job: Job<EmailJobData>) => {
-  const { emprestimoId } = job.data;
 
-  const citi = new Citi("Emprestimo");
-  const loan = await citi.getLoan(emprestimoId);
+  const { loanId } = job.data;
+  const loanWithBook: LoanReturnType | null = await getLoan(loanId);
 
   // validacao do estado do emprestimo
-  if (!loan || loan.status === "DEVOLVIDO") {
-    console.log(`[EmailWorker] Empréstimo ${emprestimoId} não existe mais, pulando.`);
+  if (!loanWithBook || loanWithBook.status === "DEVOLVIDO") {
+    console.log(`[EmailWorker] Empréstimo ${loanId} não existe mais, pulando.`);
     return;
   }
 
-  const dataFormatada = loan.dataPrevistaDevolucao.toLocaleDateString("pt-BR");
-  //adiconar logica de envio do email
+  await sendEmail(loanWithBook);
 
-  console.log(`[EmailWorker] E-mail enviado para ${loan.emailCliente}`);
+  console.log(`[EmailWorker] mail send `);
 };
 
 export const startEmailWorker = () => {
@@ -44,7 +44,7 @@ const worker = new Worker(
   "mail-notification",
   processEmailJob,
   {
-    connection: createRedisConnection(),
+    connection: redisConfig,
     concurrency: 10,
   }
 );

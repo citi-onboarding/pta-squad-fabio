@@ -29,6 +29,9 @@ importers:
       express:
         specifier: ^4.18.2
         version: 4.22.2
+      ioredis:
+        specifier: ^5.10.1
+        version: 5.10.1
       nodemailer:
         specifier: ^8.0.9
         version: 8.0.9
