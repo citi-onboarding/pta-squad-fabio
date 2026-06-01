@@ -5,6 +5,7 @@ import cors from "cors";
 import "@database";
 import { startOutboxWorker } from "./queues/OutBoxWorker";
 import { startEmailWorker } from "./queues/EmailWorker";
+import { startRecoveryWorker } from "./queues/RecoveryWorker";
 
 dotenv.config();
 
@@ -33,6 +34,7 @@ app.use(express.static(__dirname + "/public"));
 
 startEmailWorker();
 startOutboxWorker();
+startRecoveryWorker();
 
 app.listen(process.env.SERVER_PORT || 3001, () => {
   console.log("📦 Server running");

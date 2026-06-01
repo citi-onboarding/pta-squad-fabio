@@ -3,9 +3,10 @@ import { createRedisConnection, redisConfig } from "../config/RedisConfig";
 import { EmailJobData } from "../queues/EmailJobQueue";
 import { calcularStatus } from "../controllers/LoanController";
 import Citi from "../global/Citi";
-import { sendEmail } from "../service/MailService";
+import { sendMail } from "../service/MailService";
 import type { Emprestimo } from "@prisma/client";
 import { getLoan, LoanReturnType } from "../service/LoanService";
+import prisma from "../database";
 
 const processEmailJob = async (job: Job<EmailJobData>) => {
 
@@ -18,7 +19,15 @@ const processEmailJob = async (job: Job<EmailJobData>) => {
     return;
   }
 
-  await sendEmail(loanWithBook);
+  await sendMail(loanWithBook);
+
+  await prisma.outboxEvent.updateMany({
+    where: {
+          payload: { path: ["loanId"], equals: loanId },
+          emailEnviado: false,
+        },
+      data: { emailEnviado: true },
+    });
 
   console.log(`[EmailWorker] mail send `);
 };

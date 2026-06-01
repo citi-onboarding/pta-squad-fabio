@@ -53,10 +53,12 @@ model Emprestimo {
   updatedAt             DateTime           @updatedAt
 }
 
+// serve para reprocessar eventos caso algo de errado no sistema de filas
 model OutboxEvent {
   id          String   @id @default(uuid())
   eventType   String
   payload     Json
   processed   Boolean  @default(false)
+  emailEnviado  Boolean  @default(false)
   createdAt   DateTime @default(now())
 }

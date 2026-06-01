@@ -16,6 +16,8 @@ function isEmailValido(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+const publisher = createRedisConnection();
+
 class LoanController implements Crud {
     constructor(
         private readonly citi = new Citi("Emprestimo"),
@@ -107,13 +109,15 @@ class LoanController implements Crud {
         prisma.outboxEvent.create({
         data: {
             eventType: "send-mail",
-            payload: { loanId },
+            payload: {
+                loanId,
+                dataPrevistaDevolucao: dataDevolucao.toISOString().split("T")[0], // format yyyy-mm-dd
+             },
             processed: false,
                 }
         }),
     ]);
 
-        const publisher = createRedisConnection();
         await publisher.publish("outbox:send-mail", outboxEvent.id);
 
         return response.status(201).json({ message });
@@ -231,6 +235,9 @@ class LoanController implements Crud {
             data: { quantidadeDisponivel: { increment: 1 } },
         });
 
+        // remove o job de envio de email
+        await emailJobQueue.remove(`send-mail-${emprestimo.id}`);
+
         return response.status(200).json({ message: "Empréstimo finalizado com sucesso." });
     };
 
@@ -263,6 +270,8 @@ class LoanController implements Crud {
             });
         }
 
+        //remove o job de envio de email, caso exista
+        await emailJobQueue.remove(`send-mail-${emprestimo.id}`);
         return response.status(200).json({ messageFromDelete });
 
     };

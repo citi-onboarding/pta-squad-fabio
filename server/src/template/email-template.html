@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -13,7 +14,7 @@
 
           <!-- Header com logo -->
           <tr>
-            <td style="background-color:#ffffff;padding:32px 40px 20px;text-align:center;border-bottom:3px solid #52d97a;">
+            <td style="background-color:#ffffff;padding:32px 40px 20px;text-align:center;border-bottom:3px solid #FF0000;">
               <img
                 src="cid:logo-citi"
                 alt="CITi"
@@ -25,7 +26,7 @@
 
           <!-- Banner de aviso -->
           <tr>
-            <td style="background-color:#52d97a;padding:16px 40px;text-align:center;">
+            <td style="background-color:#FF0000;padding:16px 40px;text-align:center;">
               <p style="margin:0;color:#ffffff;font-size:14px;font-weight:600;letter-spacing:1px;text-transform:uppercase;">
                 📚 Lembrete de Devolução
               </p>
@@ -45,13 +46,29 @@
               </p>
 
               <!-- Card do livro -->
-              <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;margin-bottom:28px;">
+              <table
+                width="100%"
+                cellpadding="0"
+                cellspacing="0"
+                style="background-color:#FEF2F2;border:1px solid #FECACA;border-radius:8px;margin-bottom:28px;"
+              >
                 <tr>
                   <td style="padding:20px 24px;">
-                    <p style="margin:0 0 6px;font-size:12px;color:#16a34a;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Livro</p>
-                    <p style="margin:0 0 16px;font-size:18px;color:#15803d;font-weight:700;">{{tituloLivro}}</p>
-                    <p style="margin:0 0 4px;font-size:12px;color:#16a34a;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Data de Devolução</p>
-                    <p style="margin:0;font-size:16px;color:#15803d;font-weight:600;">{{dataFormatada}}</p>
+                    <p style="margin:0 0 6px;font-size:12px;color:#DC2626;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">
+                      Livro
+                    </p>
+
+                    <p style="margin:0 0 16px;font-size:18px;color:#990000;font-weight:700;">
+                      {{tituloLivro}}
+                    </p>
+
+                    <p style="margin:0 0 4px;font-size:12px;color:#DC2626;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">
+                      Data de Devolução
+                    </p>
+
+                    <p style="margin:0;font-size:16px;color:#990000;font-weight:600;">
+                      {{dataFormatada}}
+                    </p>
                   </td>
                 </tr>
               </table>
@@ -64,7 +81,9 @@
 
               <p style="margin:0;font-size:14px;color:#9ca3af;line-height:1.6;">
                 Atenciosamente,<br/>
-                <strong style="color:#52d97a;">Biblioteca CITi</strong>
+                <strong style="color:#FF0000;">
+                  Biblioteca CITi
+                </strong>
               </p>
 
             </td>
@@ -85,3 +104,4 @@
   </table>
 </body>
 </html>
+```

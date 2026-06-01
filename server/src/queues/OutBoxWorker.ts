@@ -9,9 +9,23 @@ const processOutboxEvent = async (outboxId: string) => {
 
     if (!event || event.processed) return;
 
-    const { loanId } = event.payload as { loanId: string };
+    const { loanId, dataPrevistaDevolucao } = event.payload as {
+         loanId: string;
+        dataPrevistaDevolucao: string
+    };
 
-    await emailJobQueue.add("send-mail", { loanId });
+    const devolucao = new Date(dataPrevistaDevolucao);
+    devolucao.setHours(8, 0, 0, 0); // envia às 8h do dia de devolução
+    const delay = Math.max(devolucao.getTime() - Date.now(), 0);
+
+    await emailJobQueue.add(
+        "send-mail",
+        { loanId },
+        {
+            delay,
+            jobId: `send-mail-${loanId}`,
+        }
+    );
 
     await prisma.outboxEvent.update({
         where: { id: outboxId },
