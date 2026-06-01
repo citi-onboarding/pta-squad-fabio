@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
 import "@database";
+import { startOutboxWorker } from "./queues/OutBoxWorker";
+import { startEmailWorker } from "./queues/EmailWorker";
 
 dotenv.config();
 
@@ -28,6 +30,9 @@ app.use(
 app.use(express.json());
 app.use(routes);
 app.use(express.static(__dirname + "/public"));
+
+startEmailWorker();
+startOutboxWorker();
 
 app.listen(process.env.SERVER_PORT || 3001, () => {
   console.log("📦 Server running");

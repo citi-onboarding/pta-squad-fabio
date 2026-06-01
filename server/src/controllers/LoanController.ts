@@ -1,8 +1,9 @@
 import { Request , Response } from 'express';
 import { Citi, Crud } from "../global";
 import prisma from "@database"
-import { StatusEmprestimo, Emprestimo } from '@prisma/client';
+import { StatusEmprestimo, Emprestimo, OutboxEvent } from '@prisma/client';
 import { emailJobQueue } from '../queues/EmailJobQueue';
+import { createRedisConnection } from "../config/RedisConfig";
 
 // Calcula o status do empréstimo
 export const calcularStatus = (emprestimo: Emprestimo): StatusEmprestimo => {
@@ -74,19 +75,14 @@ class LoanController implements Crud {
         };
 
         //uso de try/catch para garantir idempotencia
+        //
         try {
         const { httpStatus, message } = await this.citi.insertIntoDatabase(novoEmprestimo);
                 if (httpStatus !== 201) {
             return response.status(httpStatus).json({ error: message });
         };
 
-        // Decrementar a quantidade disponível do livro
-        await prisma.livro.update({
-            where: { id: livroId },
-            data: { quantidadeDisponivel: { decrement: 1 } },
-        });
-
-        //idealmente o id, deveria vir junto com o insert
+                //idealmente o id, deveria vir junto com o insert
         const loanId = await prisma.emprestimo.findFirst({
             where: {
                 livroId,
@@ -101,7 +97,25 @@ class LoanController implements Crud {
             return response.status(500).json({ error: "Erro interno do servidor." });
         }
 
-        emailJobQueue.add("send-mail", {loanId});
+        // Decrementar a quantidade disponível do livro
+        // outBoxEvent, servirá para a criação do job de envio de email
+        const [_, outboxEvent] = await prisma.$transaction([
+        prisma.livro.update({
+            where: { id: livroId },
+            data: { quantidadeDisponivel: { decrement: 1 } },
+        }),
+        prisma.outboxEvent.create({
+        data: {
+            eventType: "send-mail",
+            payload: { loanId },
+            processed: false,
+                }
+        }),
+    ]);
+
+        const publisher = createRedisConnection();
+        await publisher.publish("outbox:send-mail", outboxEvent.id);
+
         return response.status(201).json({ message });
 
         }catch(error){

@@ -1,5 +1,4 @@
 import { Worker, Job } from "bullmq";
-import nodemailer from "nodemailer";
 import { createRedisConnection, redisConfig } from "../config/RedisConfig";
 import { EmailJobData } from "../queues/EmailJobQueue";
 import { calcularStatus } from "../controllers/LoanController";
@@ -7,21 +6,6 @@ import Citi from "../global/Citi";
 import { sendEmail } from "../service/MailService";
 import type { Emprestimo } from "@prisma/client";
 import { getLoan, LoanReturnType } from "../service/LoanService";
-
-export const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: Number(process.env.SMTP_PORT),
-  secure: false,
-
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-
-  pool: true,
-  maxConnections: 3,
-  maxMessages: 50,
-});
 
 const processEmailJob = async (job: Job<EmailJobData>) => {
 
