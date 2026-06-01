@@ -1,35 +1,36 @@
-  import nodemailer from "nodemailer";
-  import type { Emprestimo } from "@prisma/client";
-  import { transporter } from "../queues/EmailWorker";
-  import type { Livro } from "@prisma/client";
-  import { LoanReturnType } from "./LoanService";
+import fs from "fs";
+import path from "path";
+import { transporter } from "../config/MailTransporterConfig";
+import type { LoanReturnType } from "./LoanService";
 
-export const sendEmail = async (loan: LoanReturnType) => {
+const TEMPLATE_PATH = path.join(process.cwd(), "src", "templates", "email-template.html");
+const LOGO_PATH = path.join(process.cwd(), "src", "assets", "logoCITi.png");
 
-  const dataFormatada =
-    loan.dataPrevistaDevolucao.toLocaleDateString("pt-BR");
+function buildHtml(loan: LoanReturnType): string {
+    const dataFormatada = new Date(loan.dataPrevistaDevolucao)
+        .toLocaleDateString("pt-BR");
 
-    transporter.sendMail({
-    from: `"Biblioteca" <${process.env.SMTP_FROM}>`,
-    to: loan.emailCliente,
-    subject: `Lembrete: Devolução de "${loan.livro.titulo}" é hoje`,
-    html: `
-      <h2>Olá, ${loan.nomeCliente}!</h2>
+    return fs
+        .readFileSync(TEMPLATE_PATH, "utf-8")
+        .replace("{{nomeCliente}}", loan.nomeCliente)
+        .replace("{{tituloLivro}}", loan.livro.titulo)
+        .replace("{{dataFormatada}}", dataFormatada);
+}
 
-      <p>
-        Este é um lembrete de que o prazo de devolução do livro
-        <strong>${loan.livro.titulo}</strong>
-        é hoje, <strong>${dataFormatada}</strong>.
-      </p>
+export async function sendMail(loan: LoanReturnType): Promise<void> {
+    const html = buildHtml(loan);
 
-      <p>Por favor, devolva o livro para evitar atrasos.</p>
-
-      <br/>
-
-      <p>
-        Atenciosamente,<br/>
-        Biblioteca
-      </p>
-    `,
-  });
-};
+    await transporter.sendMail({
+        from: process.env.SMTP_FROM,
+        to: loan.emailCliente,
+        subject: `Lembrete: devolução de "${loan.livro.titulo}" é hoje`,
+        html,
+        attachments: [
+            {
+                filename: "logoCITi.png",
+                path: LOGO_PATH,
+                cid: "logo-citi",
+            },
+        ],
+    });
+}
