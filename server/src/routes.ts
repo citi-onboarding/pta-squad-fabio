@@ -8,7 +8,7 @@ routes.post("/book",bookController.create);
 routes.get("/book", bookController.get);
 routes.get("/book/:id", bookController.getById)
 routes.delete("/book/:id", bookController.delete);
-
+routes.patch("/book/:id", bookController.reduceQuantity);
 
 routes.get("/loans/analytics", LoanController.getAnalytics);
 routes.post("/loans", LoanController.create);

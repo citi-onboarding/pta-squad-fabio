@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import {Citi, Crud} from "../global"
+import prisma from "@database";
 
 class BookController implements Crud{
     constructor(private readonly citi = new Citi("Livro")) {}
@@ -80,6 +81,59 @@ class BookController implements Crud{
         // Procurar o livro pelo id mencionado.
         const {httpStatus, value} = await this.citi.findById(id);
         return response.status(httpStatus).send(value);
+    };
+
+     reduceQuantity = async (request: Request, response: Response) => {
+        const { id } = request.params;
+        const { quantidadeARemover } = request.body;
+
+        try {
+            if (quantidadeARemover === undefined) {
+                return response.status(400).send({
+                    message: "Quantidade a remover é obrigatória."
+                });
+            }
+
+            const qtdRemover = Number(quantidadeARemover);
+
+            if (isNaN(qtdRemover) || qtdRemover <= 0) {
+                return response.status(400).send({
+                    message: "Quantidade deve ser um número positivo."
+                });
+            }
+
+            const { value: livro } = await this.citi.findById(id);
+
+            if (!livro) {
+                return response.status(404).send({
+                    message: "Livro não encontrado."
+                });
+            }
+
+            if (qtdRemover > livro.quantidadeDisponivel) {
+                return response.status(409).send({
+                    message: `Quantidade indisponível. Você tem ${livro.quantidadeDisponivel} livros disponíveis.`
+                });
+            }
+
+            await prisma.livro.update({
+                where: { id },
+                data: {
+                    quantidadeTotal: livro.quantidadeTotal - qtdRemover,
+                    quantidadeDisponivel: livro.quantidadeDisponivel - qtdRemover,
+                }
+            });
+
+            return response.status(200).send({
+                message: `${qtdRemover} livro(s) removido(s) com sucesso.`
+            });
+
+        } catch (error) {
+            console.error("Erro ao reduzir quantidade:", error);
+            return response.status(500).send({
+                message: "Erro ao reduzir quantidade de livros."
+            });
+        }
     };
 }
 
