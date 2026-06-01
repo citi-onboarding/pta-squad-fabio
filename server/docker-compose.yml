@@ -17,6 +17,7 @@ services:
     depends_on:
       - db
       - redis
+
     environment:
       DATABASE_URL: postgres://${DATABASE_USER}:${DATABASE_PASSWORD}@db:5432/${DATABASE_DB}
 
@@ -29,6 +30,8 @@ services:
       QUEUE_HOST: redis
       QUEUE_PORT: 6379
 
+    networks:
+      - app-network
   db:
     image: postgres:16
     container_name: ${PROJECT_NAME}-db
@@ -43,6 +46,8 @@ services:
       - "${DATABASE_PORT}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    networks:
+      - app-network
 
   redis:
     image: redis:7-alpine
@@ -59,5 +64,13 @@ services:
 
 volumes:
   pgdata:
+<<<<<<< HEAD
   redisdata:
   node_modules:
+=======
+  node_modules:
+
+networks:
+  app-network:
+    driver: bridge
+>>>>>>> develop

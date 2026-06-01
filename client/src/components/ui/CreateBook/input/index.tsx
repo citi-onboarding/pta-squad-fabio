@@ -27,7 +27,7 @@ export default function Input({
       formattedValue = inputValue.replace(/\D/g, "");
     }
 
-    
+
     if (variant === "isbn") {
       const digits = inputValue
         .replace(/\D/g, "")
@@ -74,18 +74,22 @@ export default function Input({
         maxLength={maxLength}
         onChange={(e) => handleInputChange(e.target.value)}
         className={`
-          rounded-[5px]
-          border
-          px-3
-          py-2.5
-          text-sm
-          outline-none
-          transition-colors
-          ${error
-            ? "border-red-500 focus:border-red-500"
-            : "border-slate-300 focus:border-slate-500"
+    rounded-[5px]
+    border
+    px-3
+    py-2.5
+    text-sm
+    outline-none
+    transition-all
+
+    ${error
+            ? "border-red-500 bg-red-50"
+            : "border-slate-300"
           }
-        `}
+
+    focus:border-red-500
+    focus:bg-red-50
+  `}
       />
 
       {error && (
