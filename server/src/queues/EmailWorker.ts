@@ -26,8 +26,18 @@ import prisma from "../database";
 
 const processEmailJob = async (job: Job<EmailJobData>) => {
 
+    console.log("[EmailWorker] JOB RECEBIDO:", {
+    id: job.id,
+    name: job.name,
+    data: job.data,
+    delay: job.opts.delay,
+    timestamp: job.timestamp,
+  });
+
   const { loanId } = job.data;
   const loanWithBook: LoanReturnType | null = await getLoan(loanId);
+
+    console.log("[EmailWorker] EMPRÉSTIMO:", loanWithBook);
 
   // validacao do estado do emprestimo
   if (!loanWithBook || loanWithBook.status === "DEVOLVIDO") {
@@ -35,7 +45,11 @@ const processEmailJob = async (job: Job<EmailJobData>) => {
     return;
   }
 
+  console.log("[EmailWorker] Enviando email");
+
   await sendMail(loanWithBook);
+
+  console.log("[EmailWorker] email enviado");
 
   await prisma.outboxEvent.updateMany({
     where: {
@@ -48,9 +62,11 @@ const processEmailJob = async (job: Job<EmailJobData>) => {
   console.log(`[EmailWorker] mail send `);
 };
 
+
 export { processEmailJob };
 
 export const startEmailWorker = () => {
+console.log("[EmailWorker] iniciado");
 const worker = new Worker(
   "mail-notification",
   processEmailJob,

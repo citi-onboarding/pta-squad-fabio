@@ -26,28 +26,38 @@ routes.get("/loans/book/:livroId", LoanController.getByLivroId);
 routes.post("/test/queue-email", async (req, res) => {
   const { loanId, delayMinutes = 0 } = req.body;
 
-  if (!loanId) {
-    return res.status(400).json({
-      error: "loanId é obrigatório",
-    });
-  }
+  console.log("BODY RECEBIDO:", req.body);
 
-  const job = await emailJobQueue.add(
-    "send-mail",
-    { loanId },
-    {
-      delay: delayMinutes * 60 * 1000,
-      jobId: `send-mail-${loanId}`,
-    }
+const job = await emailJobQueue.add(
+  "send-mail",
+  { loanId },
+  {
+    delay: 0,
+    jobId: `send-mail-test-${loanId}-${Date.now()}`
+  }
+);
+
+    const delayed = await emailJobQueue.getDelayed();
+
+  console.log(
+    "DELAYED:",
+    delayed.map((j) => ({
+      id: j.id,
+      data: j.data,
+      delay: j.opts.delay,
+    }))
   );
+
+  console.log("JOB CRIADO:", {
+    id: job.id,
+    name: job.name,
+    data: job.data,
+    delay: job.opts.delay,
+  });
 
   return res.status(201).json({
     jobId: job.id,
     loanId,
-    scheduledIn:
-      delayMinutes > 0
-        ? `${delayMinutes} minuto(s)`
-        : "imediato",
   });
 });
 

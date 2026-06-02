@@ -3,67 +3,80 @@ import path from "path";
 import { transporter } from "../config/MailTransporterConfig";
 import type { LoanReturnType } from "./LoanService";
 
-const TEMPLATE_PATH = path.join(process.cwd(), "src", "templates", "email-template.html");
-const LOGO_PATH = path.join(process.cwd(), "src", "assets", "logoCITi.png");
+const ASSETS_PATH = path.join(process.cwd(), "assets");
 
+function buildHtml(
+  templatePath: string,
+  replacements: Record<string, string>
+): string {
+  let html = fs.readFileSync(templatePath, "utf-8");
 
-function buildHtml(loan: LoanReturnType): string {
-    const dataFormatada = new Date(loan.dataPrevistaDevolucao)
-        .toLocaleDateString("pt-BR");
+  for (const [key, value] of Object.entries(replacements)) {
+    html = html.replaceAll(`{{${key}}}`, value);
+  }
 
-    return fs
-        .readFileSync(TEMPLATE_PATH, "utf-8")
-        .replace("{{nomeCliente}}", loan.nomeCliente)
-        .replace("{{tituloLivro}}", loan.livro.titulo)
-        .replace("{{dataFormatada}}", dataFormatada);
+  return html;
 }
 
-export async function sendMail(loan: LoanReturnType): Promise<void> {
-    const html = buildHtml(loan);
-
-    await transporter.sendMail({
-        from: process.env.SMTP_FROM,
-        to: loan.emailCliente,
-        subject: `Lembrete: devolução de "${loan.livro.titulo}" é hoje`,
-        html,
-        attachments: [
-            {
-                filename: "logoCITi.png",
-                path: LOGO_PATH,
-                cid: "logo-citi",
-            },
-        ],
-    });
+function formatDate(date: string | Date): string {
+  return new Date(date).toLocaleDateString("pt-BR");
 }
 
-export async function sendOverdueBookMail(loan: LoanReturnType){
-    const OVERDUE_TEMPLATE_PATH = path.join(process.cwd(), "src", "templates", "email-atrasado-template.html");
+export async function sendMail(
+  loan: LoanReturnType
+): Promise<void> {
+  const templatePath = path.join(
+    ASSETS_PATH,
+    "email-template.html"
+  );
 
-    const dataFormatada = new Date(loan.dataPrevistaDevolucao)
-        .toLocaleDateString("pt-BR");
+  const html = buildHtml(templatePath, {
+    nomeCliente: loan.nomeCliente,
+    tituloLivro: loan.livro.titulo,
+    dataFormatada: formatDate(
+      loan.dataPrevistaDevolucao
+    ),
+  });
 
-    const diasAtraso = Math.floor(
-        (Date.now() - new Date(loan.dataPrevistaDevolucao).getTime()) / (1000 * 60 * 60 * 24)
-    );
+  await transporter.sendMail({
+    from: process.env.SMTP_FROM,
+    to: loan.emailCliente,
+    subject: `Lembrete: devolução de "${loan.livro.titulo}" é hoje`,
+    html,
+  });
+}
 
-    const html = fs
-        .readFileSync(OVERDUE_TEMPLATE_PATH, "utf-8")
-        .replace("{{nomeCliente}}", loan.nomeCliente)
-        .replace("{{tituloLivro}}", loan.livro.titulo)
-        .replace("{{dataFormatada}}", dataFormatada)
-        .replace("{{diasAtraso}}", String(diasAtraso));
+export async function sendOverdueBookMail(
+  loan: LoanReturnType
+): Promise<void> {
+  const templatePath = path.join(
+    ASSETS_PATH,
+    "email-atrasado-template.html"
+  );
 
-    await transporter.sendMail({
-        from: process.env.SMTP_FROM,
-        to: loan.emailCliente,
-        subject: `Aviso: devolução de "${loan.livro.titulo}" está em atraso`,
-        html,
-        attachments: [
-            {
-                filename: "logoCITi.png",
-                path: LOGO_PATH,
-                cid: "logo-citi",
-            },
-        ],
-    });
+  const diasAtraso = Math.floor(
+    (
+      Date.now() -
+      new Date(
+        loan.dataPrevistaDevolucao
+      ).getTime()
+    ) /
+      (1000 * 60 * 60 * 24)
+  );
+
+  const html = buildHtml(templatePath, {
+    nomeCliente: loan.nomeCliente,
+    tituloLivro: loan.livro.titulo,
+    dataFormatada: formatDate(
+      loan.dataPrevistaDevolucao
+    ),
+    diasAtraso: String(diasAtraso),
+  });
+
+  await transporter.sendMail({
+    from: process.env.SMTP_FROM,
+    to: loan.emailCliente,
+    subject: `Aviso: devolução de "${loan.livro.titulo}" está em atraso`,
+    html,
+  });
 }
