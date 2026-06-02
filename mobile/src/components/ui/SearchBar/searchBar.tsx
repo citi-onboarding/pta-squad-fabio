@@ -15,6 +15,7 @@ export default function SearchBar({ onBuscar, totalEncontrados } : SearchBarProp
                 value={textoBusca}
                 onChangeText={setTextoBusca}
                 placeholder='João Silva'
+                placeholderTextColor='#6b7280'
                 className='bg-white border border-gray-200 rounded-lg px-4 py-3 text-base text-gray-800'
             />
             <TouchableOpacity
