@@ -101,7 +101,7 @@ export default function Header() {
           className="flex items-center"
           style={{ gap: isUltrawide ? "12px" : isMobile ? "4px" : "8px" }}
         >
-          <Link href="/" className={navLinkClass("/")}>
+          <Link href="/DashboardPage" className={navLinkClass("/DashboardPage")}>
             <Image
               src={house_red}
               alt=""

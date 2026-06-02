@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import axios from "axios"
+import { api } from "@/services/api"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Cell } from "recharts"
 import { Card, CardContent, CardHeader, CardTitle } from "../card"
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "../chart"
@@ -17,6 +17,17 @@ const chartConfig = {
   infantil: { label: "Infantil", color: "#ffcd07" },
 } satisfies ChartConfig
 
+function formatCategoria(categoria: string) {
+  const categorias: Record<string, string> = {
+    ROMANCE: "Romance",
+    TECNOLOGIA: "Tecnologia",
+    HISTORIA: "História",
+    CIENCIAS: "Ciências",
+    INFANTIL: "Infantil",
+  }
+  return categorias[categoria] ?? categoria
+}
+
 export function BookChart() {
   const [dadosGerais, setDadosGerais] = useState<RespostaAnalytics>({})
   const [selectedSemester, setSelectedSemester] = useState<string>("")
@@ -27,16 +38,17 @@ export function BookChart() {
     async function carregarDados() {
       try {
         setLoading(true)
-        const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001"
-        const response = await axios.get<RespostaAnalytics>(`${baseUrl}/loans/analytics`)
+        const response = await api.get<RespostaAnalytics>("/loans/analytics")
         const data = response.data
 
         // Injeta as propriedades de cor (fill) dinamicamente baseada na categoria
         Object.keys(data).forEach((semestre) => {
           data[semestre] = data[semestre].map((item) => {
-            const cleanKey = item.categoria.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+            const categoriaFormatada = formatCategoria(item.categoria)
+            const cleanKey = categoriaFormatada.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
             return {
               ...item,
+              categoria: categoriaFormatada,
               fill: `var(--color-${cleanKey})`
             }
           })
@@ -68,7 +80,7 @@ export function BookChart() {
       <CardHeader>
         <div className="flex flex-row items-center justify-between w-full">
           <CardTitle className="text-2xl font-semibold text-zinc-700">
-            Livros por Categoria
+            Empréstimos por Categoria
           </CardTitle>
           
           {!loading && listaDeSemestres.length > 0 && (
@@ -101,7 +113,7 @@ export function BookChart() {
               <BarChart accessibilityLayer data={filteredData}>
                 <CartesianGrid vertical={false} strokeDasharray="3 3" opacity={0.2} />
                 <XAxis dataKey="categoria" tickLine={true} tickMargin={10} axisLine={true} tick={{ fontSize: 18, fill: "#71717a" }} />
-                <YAxis tickLine={true} axisLine={true} tickMargin={10} tick={{ fontSize: 18, fill: "#71717a" }} />
+                <YAxis allowDecimals={false} tickLine={true} axisLine={true} tickMargin={10} tick={{ fontSize: 18, fill: "#71717a" }} />
                 <ChartTooltip content={<ChartTooltipContent nameKey="categoria" hideIndicator={false} />} />
                 <Bar dataKey="quantidade" radius={[4, 4, 0, 0]}>
                   {filteredData.map((entry, index) => (
