@@ -128,6 +128,7 @@ export default function BookCard({ id, title, author, category, available,
         isbn = {isbn}
         editora={editora}
         emprestimos={emprestimos}
+        onDevolvidoSuccess={handleSuccess}
         />
 
       <ModalDelete

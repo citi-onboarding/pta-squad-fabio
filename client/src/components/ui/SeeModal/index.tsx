@@ -12,6 +12,8 @@ import type { Categorias } from "../CardDeLivro";
 import { Cover } from "../CardDeLivro";
 import { categoriaLabel } from "../CardDeLivro";
 import { formatarDataBR } from "@/lib/dateFormatter";
+import { Check } from "lucide-react";
+import { api } from "@/services/api";
 
 
 type StatusEmprestimo = "EM_ANDAMENTO" | "ATRASADO" | "DEVOLVIDO";
@@ -22,6 +24,7 @@ type Emprestimo = {
   dataLocacao: string;
   dataPrevistaDevolucao: string;
   status: StatusEmprestimo;
+  id: string;
 };
 
 type ModalSeeProps = {
@@ -36,6 +39,7 @@ type ModalSeeProps = {
     isbn: string;
     editora: string;
     emprestimos: Emprestimo[];
+    onDevolvidoSuccess?: () => void;
 }
 
 const statusOut: Record<StatusEmprestimo, string> = {
@@ -53,9 +57,20 @@ const statusStyles = {
 export default function ModalSee({
     isOpen, onClose, booktitle, category, year,
     author, total, available, isbn, editora,
-    emprestimos
+    emprestimos, onDevolvidoSuccess
 }:ModalSeeProps){
     const chosen_cover = Cover[category]
+
+    const handleDevolver = async (id: string) => {
+        try{
+            await api.patch(`/loans/${id}`)
+            onClose()
+            onDevolvidoSuccess?.()
+
+        } catch(error) {
+            console.error("Erro ao marcar como devolvido: ", error)
+        }
+    }
 
     return(
         <Dialog open={isOpen} onOpenChange={onClose}>
@@ -125,7 +140,7 @@ export default function ModalSee({
                             emprestimos.slice(-2).reverse().map((emprestimo, index) => (
                             <div
                                 key={index}
-                                className="border border-gray-200 rounded-lg p-4 flex  justify-between"
+                                className="border border-gray-200 rounded-lg p-4 flex justify-between"
                             >
                                 <div className="flex flex-col gap-1">
                                 <div className="flex items-center gap-2">
@@ -148,6 +163,7 @@ export default function ModalSee({
                                 </div>
 
                                 {emprestimo.status === "ATRASADO" && (
+                                <div className="flex gap-2">
                                 <Button
                                     variant="outline"
                                     className="gap-2 text-[#FF0000]"
@@ -155,6 +171,25 @@ export default function ModalSee({
                                     <Image src={mail_red} alt="Mail" width={16} height={16}/>
                                     Enviar Lembrete
                                 </Button>
+
+                                <Button
+                                    className="gap-2"
+                                    onClick={() => handleDevolver(emprestimo.id)}
+                                >
+                                    <Check size={14} className="md:w-4 md:h-4" />
+                                    Marcar como Devolvido
+                                </Button>
+                                </div>
+                                )}
+
+                                {emprestimo.status == "EM_ANDAMENTO" && (
+                                    <Button
+                                        className="gap-2"
+                                        onClick={() => handleDevolver(emprestimo.id)}
+                                    >
+                                        <Check size={14} className="md:w-4 md:h-4" />
+                                        Marcar como Devolvido
+                                    </Button>
                                 )}
                             </div>
                             ))
