@@ -113,7 +113,7 @@ export function BookChart() {
               <BarChart accessibilityLayer data={filteredData}>
                 <CartesianGrid vertical={false} strokeDasharray="3 3" opacity={0.2} />
                 <XAxis dataKey="categoria" tickLine={true} tickMargin={10} axisLine={true} tick={{ fontSize: 18, fill: "#71717a" }} />
-                <YAxis tickLine={true} axisLine={true} tickMargin={10} tick={{ fontSize: 18, fill: "#71717a" }} />
+                <YAxis allowDecimals={false} tickLine={true} axisLine={true} tickMargin={10} tick={{ fontSize: 18, fill: "#71717a" }} />
                 <ChartTooltip content={<ChartTooltipContent nameKey="categoria" hideIndicator={false} />} />
                 <Bar dataKey="quantidade" radius={[4, 4, 0, 0]}>
                   {filteredData.map((entry, index) => (
