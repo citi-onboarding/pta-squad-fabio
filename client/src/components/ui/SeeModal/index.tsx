@@ -6,19 +6,25 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { mail } from "@/assets"
+import { mail_red } from "@/assets"
 import Image from "next/image";
 import type { Categorias } from "../CardDeLivro";
 import { Cover } from "../CardDeLivro";
+import { categoriaLabel } from "../CardDeLivro";
+import { formatarDataBR } from "@/lib/dateFormatter";
+import { Check } from "lucide-react";
+import { api } from "@/services/api";
 
-type StatusEmprestimo = "Em andamento" | "Atrasado" | "Devolvido";
+
+type StatusEmprestimo = "EM_ANDAMENTO" | "ATRASADO" | "DEVOLVIDO";
 
 type Emprestimo = {
   nomeCliente: string;
-  email: string;
+  emailCliente: string;
   dataLocacao: string;
-  dataPrevisao: string;
+  dataPrevistaDevolucao: string;
   status: StatusEmprestimo;
+  id: string;
 };
 
 type ModalSeeProps = {
@@ -33,20 +39,38 @@ type ModalSeeProps = {
     isbn: string;
     editora: string;
     emprestimos: Emprestimo[];
+    onDevolvidoSuccess?: () => void;
+}
+
+const statusOut: Record<StatusEmprestimo, string> = {
+  EM_ANDAMENTO: "Em andamento",
+  ATRASADO: "Atrasado",
+  DEVOLVIDO: "Devolvido",
 }
 
 const statusStyles = {
-    "Em andamento": "bg-yellow-100 text-yellow-800",
-    "Atrasado": "bg-red-100 text-red-800",
-    "Devolvido": "bg-green-100 text-green-800",
+    "EM_ANDAMENTO": "bg-yellow-100 text-yellow-800",
+    "ATRASADO": "bg-red-100 text-red-800",
+    "DEVOLVIDO": "bg-green-100 text-green-800",
 }
 
 export default function ModalSee({
     isOpen, onClose, booktitle, category, year,
     author, total, available, isbn, editora,
-    emprestimos
+    emprestimos, onDevolvidoSuccess
 }:ModalSeeProps){
     const chosen_cover = Cover[category]
+
+    const handleDevolver = async (id: string) => {
+        try{
+            await api.patch(`/loans/${id}`)
+            onClose()
+            onDevolvidoSuccess?.()
+
+        } catch(error) {
+            console.error("Erro ao marcar como devolvido: ", error)
+        }
+    }
 
     return(
         <Dialog open={isOpen} onOpenChange={onClose}>
@@ -79,7 +103,7 @@ export default function ModalSee({
 
                             <div>
                             <p className="text-sm text-gray-500">Categoria</p>
-                            <p className="text-base text-emerald-500 font-medium">{category}</p>
+                            <p className="text-base text-[#FF0000]  font-medium">{categoriaLabel[category]}</p>
                             </div>
 
                             <div>
@@ -99,7 +123,7 @@ export default function ModalSee({
 
                             <div>
                             <p className="text-sm text-gray-500">Quantidade Disponível</p>
-                            <p className="text-base text-emerald-500 font-medium">{available} unidades</p>
+                            <p className="text-base text-[#FF0000]  font-medium">{available} unidades</p>
                             </div>
                         </div>
                         </div>
@@ -113,10 +137,10 @@ export default function ModalSee({
                         {emprestimos.length === 0 ? (
                             <p className="text-sm text-gray-500 py-4 text-center">Nenhum empréstimo registrado</p>
                         ) : (
-                            emprestimos.slice(-3).reverse().map((emprestimo, index) => (
+                            emprestimos.slice(-2).reverse().map((emprestimo, index) => (
                             <div
                                 key={index}
-                                className="border border-gray-200 rounded-lg p-4 flex  justify-between"
+                                className="border border-gray-200 rounded-lg p-4 flex justify-between"
                             >
                                 <div className="flex flex-col gap-1">
                                 <div className="flex items-center gap-2">
@@ -128,24 +152,44 @@ export default function ModalSee({
                                         statusStyles[emprestimo.status]
                                     }`}
                                     >
-                                    {emprestimo.status}
+                                    {statusOut[emprestimo.status]}
                                     </span>
                                 </div>
-                                <p className="text-sm text-gray-500">{emprestimo.email}</p>
+                                <p className="text-sm text-gray-500">{emprestimo.emailCliente}</p>
                                 <p className="text-sm text-gray-500">
-                                    Locação: <span className="font-medium mr-4">{emprestimo.dataLocacao}</span>
-                                    Previsão: <span className="font-medium">{emprestimo.dataPrevisao}</span>
+                                    Locação: <span className="font-medium mr-4">{formatarDataBR(emprestimo.dataLocacao)}</span>
+                                    Previsão: <span className="font-medium">{formatarDataBR(emprestimo.dataPrevistaDevolucao)}</span>
                                 </p>
                                 </div>
 
-                                {emprestimo.status === "Atrasado" && (
+                                {emprestimo.status === "ATRASADO" && (
+                                <div className="flex gap-2">
                                 <Button
                                     variant="outline"
-                                    className="gap-2"
+                                    className="gap-2 text-[#FF0000]"
                                 >
-                                    <Image src={mail} alt="Mail" width={16} height={16}/>
+                                    <Image src={mail_red} alt="Mail" width={16} height={16}/>
                                     Enviar Lembrete
                                 </Button>
+
+                                <Button
+                                    className="gap-2"
+                                    onClick={() => handleDevolver(emprestimo.id)}
+                                >
+                                    <Check size={14} className="md:w-4 md:h-4" />
+                                    Marcar como Devolvido
+                                </Button>
+                                </div>
+                                )}
+
+                                {emprestimo.status == "EM_ANDAMENTO" && (
+                                    <Button
+                                        className="gap-2"
+                                        onClick={() => handleDevolver(emprestimo.id)}
+                                    >
+                                        <Check size={14} className="md:w-4 md:h-4" />
+                                        Marcar como Devolvido
+                                    </Button>
                                 )}
                             </div>
                             ))

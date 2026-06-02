@@ -31,7 +31,7 @@ import { createBook } from "@/services/bookService";
 const ROUTES = {
   HOME: "/",
   DASHBOARD: "/DashBoardPage",
-  LIVRO:  "/livros",
+  LIVRO:  "/Books",
 };
 
 const INITIAL_FORM_DATA: BookFormData = {

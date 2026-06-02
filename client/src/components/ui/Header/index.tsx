@@ -111,7 +111,7 @@ export default function Header() {
             <span>Dashboard</span>
           </Link>
 
-          <Link href="/livros" className={navLinkClass("/livros")}>
+          <Link href="/Books" className={navLinkClass("/Books")}>
             <Image
               src={book_red}
               alt=""
