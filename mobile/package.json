@@ -11,6 +11,7 @@
   "dependencies": {
     "@babel/runtime": "^7.27.1",
     "@expo-google-fonts/barlow": "^0.2.3",
+    "axios": "^1.16.1",
     "babel-preset-expo": "^54.0.10",
     "expo": "^54.0.34",
     "expo-asset": "^12.0.13",

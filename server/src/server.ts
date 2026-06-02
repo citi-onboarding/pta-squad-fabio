@@ -8,6 +8,7 @@ dotenv.config();
 
 const allowedOrigins = [
   "http://localhost:3000",
+  "http://localhost:8082",
   process.env.CLIENT_URL,
 ].filter(Boolean) as string[];
 

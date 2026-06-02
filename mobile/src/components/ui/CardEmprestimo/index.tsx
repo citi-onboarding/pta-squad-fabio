@@ -73,7 +73,7 @@ export default function CardEmprestimo({ emprestimo }: CardEmprestimoProps): Rea
   // Figma specs
   const HORIZONTAL_MARGIN = width > 420 ? 24 : 16;
   const IMAGE_WIDTH = Math.min(96, Math.max(56, Math.floor(width * 0.16)));
-  const IMAGE_HEIGHT = Math.round(IMAGE_WIDTH * 1.4);
+  const IMAGE_HEIGHT = Math.round(IMAGE_WIDTH * 1.6);
 
   const statusConfig: Record<StatusEmprestimo, { label: string; bg: string; text: string }> = {
     EM_ANDAMENTO: { label: "Em andamento", bg: "bg-yellow-100", text: "text-yellow-700" },
