@@ -13,6 +13,10 @@ import book from "./Icons/book.svg";
 import book_red from "./Icons/book_red.svg";
 import bookmark from "./Icons/bookmark.svg";
 import clock from "./Icons/clock.svg";
+import clock_red from "./Icons/clock_red.svg";
+import circle_alert from "./Icons/circle_alert.svg";
+import chevron_left from "./Icons/chevron_left.svg";
+import chevron_right from "./Icons/chevron_right.svg";
 import deleteicon from "./Icons/delete.svg";
 import exclamation from "./Icons/exclamation.svg";
 import house from "./Icons/house.svg";
@@ -27,4 +31,4 @@ import delete_red from "./Icons/delete_red.svg";
 
 
 
-export { LogoCITi, LogoCITi_red, ciencias, historia, infantil, romance, tecnologia, book, book_red, bookmark, clock, deleteicon, exclamation, house, house_red, mail, plus, search, eye, eye_red, mail_red, delete_red };
+export { LogoCITi, LogoCITi_red, ciencias, historia, infantil, romance, tecnologia, book, book_red, bookmark, clock, clock_red, circle_alert, chevron_left, chevron_right, deleteicon, exclamation, house, house_red, mail, plus, search, eye, eye_red, mail_red, delete_red };
