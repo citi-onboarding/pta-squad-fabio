@@ -1,4 +1,6 @@
 /* eslint-disable import/prefer-default-export */
-import ThemeProvider from "./ThemeProvider";
-
-export { ThemeProvider };
+export { default as ThemeProvider } from './ThemeProvider';
+export { default as CardEmprestimo } from './ui/CardEmprestimo';
+export type { Emprestimo, Livro, CategoriaLivro, StatusEmprestimo } from './ui/CardEmprestimo';
+export {default as Header} from './ui/Header/header'
+export {default as SearchBar} from './ui/SearchBar/searchBar'
