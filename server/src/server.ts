@@ -29,6 +29,26 @@ app.use(
 
 
 app.use(express.json());
+
+//midleware para rodar o job de notificação de empréstimos atrasados
+let running = false;
+
+app.use((req, res, next) => {
+  res.on("finish", () => {
+    if (running) return;
+
+    running = true;
+
+    runLoanNotificationJob()
+      .catch(console.error)
+      .finally(() => {
+        running = false;
+      });
+  });
+
+  next();
+});
+
 app.use(routes);
 app.use(express.static(__dirname + "/public"));
 
