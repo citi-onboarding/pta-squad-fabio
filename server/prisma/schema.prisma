@@ -43,7 +43,7 @@ model Livro {
 model Emprestimo {
   id                    String             @id @default(uuid())
   livroId               String
-  livro                 Livro              @relation(fields: [livroId], references: [id],onDelete: Cascade)
+  livro                 Livro              @relation(fields: [livroId], references: [id])
   nomeCliente           String
   emailCliente          String
   dataLocacao           DateTime           @default(now())
