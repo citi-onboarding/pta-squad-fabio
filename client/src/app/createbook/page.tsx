@@ -30,7 +30,7 @@ import { createBook } from "@/services/bookService";
 
 const ROUTES = {
   HOME: "/",
-  DASHBOARD: "/DashBoardPage",
+  DASHBOARD: "/DashboardPage",
   LIVRO:  "/Books",
 };
 
