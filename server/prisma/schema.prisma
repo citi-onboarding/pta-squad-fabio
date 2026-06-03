@@ -51,4 +51,11 @@ model Emprestimo {
   status                StatusEmprestimo   @default(EM_ANDAMENTO)
   createdAt             DateTime           @default(now())
   updatedAt             DateTime           @updatedAt
+  sentMail              SentMail?
+}
+
+model SentMail {
+  id      String     @id @default(uuid())
+  loanId  String     @unique
+  loan    Emprestimo @relation(fields: [loanId], references: [id])
 }

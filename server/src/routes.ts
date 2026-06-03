@@ -1,6 +1,7 @@
 import express from "express";
 import bookController from "./controllers/BookController";
 import LoanController from "./controllers/LoanController";
+import MailController from "./controllers/MailController";
 
 const routes = express.Router();
 
@@ -17,5 +18,6 @@ routes.get("/loans/:id", LoanController.getById);
 routes.patch("/loans/:id", LoanController.update);
 routes.delete("/loans/:id", LoanController.delete);
 routes.get("/loans/book/:livroId", LoanController.getByLivroId);
+routes.post("/mail/send", (req, res) => MailController.sendMail(req, res));
 
 export default routes;
