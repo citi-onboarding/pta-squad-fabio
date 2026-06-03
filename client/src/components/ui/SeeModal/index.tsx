@@ -14,6 +14,7 @@ import { categoriaLabel } from "../CardDeLivro";
 import { formatarDataBR } from "@/lib/dateFormatter";
 import { Check } from "lucide-react";
 import { api } from "@/services/api";
+import toast from "react-hot-toast"
 
 
 type StatusEmprestimo = "EM_ANDAMENTO" | "ATRASADO" | "DEVOLVIDO";
@@ -60,6 +61,19 @@ export default function ModalSee({
     emprestimos, onDevolvidoSuccess
 }:ModalSeeProps){
     const chosen_cover = Cover[category]
+
+const handleEnviarLembrete = async (id: string, email: string) => {
+  try {
+    await api.post(`/mail/send`, {
+      to: email,
+      loanId: id,
+    })
+    toast.success(`E-mail enviado com sucesso para ${email}.`)
+  } catch (error) {
+    console.error("Erro ao enviar lembrete: ", error)
+    toast.error("Não foi possível enviar o e-mail. Tente novamente.")
+  }
+}
 
     const handleDevolver = async (id: string) => {
         try{
@@ -132,7 +146,7 @@ export default function ModalSee({
 
                     <div>
                         <h3 className="text-lg font-semibold text-gray-900 mb-4">Histórico de Empréstimos</h3>
-                        
+
                         <div className="flex flex-col gap-3">
                         {emprestimos.length === 0 ? (
                             <p className="text-sm text-gray-500 py-4 text-center">Nenhum empréstimo registrado</p>
@@ -167,6 +181,7 @@ export default function ModalSee({
                                 <Button
                                     variant="outline"
                                     className="gap-2 text-[#FF0000]"
+                                    onClick={() => handleEnviarLembrete(emprestimo.id, emprestimo.emailCliente)}
                                 >
                                     <Image src={mail_red} alt="Mail" width={16} height={16}/>
                                     Enviar Lembrete
