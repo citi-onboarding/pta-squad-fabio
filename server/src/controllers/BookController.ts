@@ -23,15 +23,15 @@ class BookController implements Crud{
         return response.status(400).send({message:"O ISBN deve ter 10 ou 13 dígitos."})
     }
 
-    const newBook = { 
-        titulo, autor, 
-        isbn, editora, 
-        ano:Number(ano), quantidadeTotal:Number(quantidadeTotal), 
+    const newBook = {
+        titulo, autor,
+        isbn, editora,
+        ano:Number(ano), quantidadeTotal:Number(quantidadeTotal),
         quantidadeDisponivel:Number(quantidadeTotal), categoria
     };
 
     const {httpStatus, message} = await this.citi.insertIntoDatabase(newBook);
-    
+
     // Retorna resposta final do banco de dados.
     return response.status(httpStatus).send({message});
     };
@@ -46,7 +46,7 @@ class BookController implements Crud{
         if(httpStatus !== 200){
             return response.status(httpStatus).send(values);
         }
-    
+
         let booksFiltered = values;
 
         // Verifica se tem parâmetro opcional e filtra os livros pelo parâmetro.
@@ -67,17 +67,60 @@ class BookController implements Crud{
     };
 
 
-    delete = async (request:Request, response: Response) => {
-        // Definindo que vamos deletar pelo id do livro.
-        const {id} = request.params;
-        const { httpStatus, messageFromDelete} = await this.citi.deleteValue(id);
-        return response.status(httpStatus).send({messageFromDelete});
+    delete = async (request: Request, response: Response) => {
+    try {
+        const { id } = request.params;
+
+        const livro = await prisma.livro.findUnique({
+        where: { id },
+        });
+
+        if (!livro) {
+        return response.status(404).send({
+            message: "Não foi possível encontrar o livro.",
+        });
+        }
+
+        const hasLoan =
+        livro.quantidadeDisponivel !== livro.quantidadeTotal;
+
+        if (hasLoan) {
+        return response.status(409).send({
+            message:
+            "Não é possível deletar o livro, existem empréstimos ativos.",
+        });
+        }
+
+        await prisma.$transaction([
+        prisma.emprestimo.deleteMany({
+            where: {
+            livroId: id,
+            },
+        }),
+        prisma.livro.delete({
+            where: {
+            id,
+            },
+        }),
+        ]);
+
+        return response.status(200).send({
+        message: "Livro deletado com sucesso.",
+        });
+    } catch (error) {
+        console.error("Erro ao deletar o livro:", error);
+
+        return response.status(500).send({
+        message: "Erro ao deletar o livro.",
+        });
+    }
     };
+
 
     getById = async(request:Request, response:Response) =>{
         // Passando o id.
         const {id} = request.params;
-        
+
         // Procurar o livro pelo id mencionado.
         const {httpStatus, value} = await this.citi.findById(id);
         return response.status(httpStatus).send(value);
