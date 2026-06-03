@@ -32,26 +32,16 @@ export function getOverdueLoans() {
   });
 }
 
-export async function getLoansNotNotified() {
-  const startOfDay = new Date();
-  startOfDay.setHours(0, 0, 0, 0);
-
-  const endOfDay = new Date();
-  endOfDay.setHours(23, 59, 59, 999);
-
-  const loans = await prisma.emprestimo.findMany({
+export function getLoansNotNotified() {
+  return prisma.emprestimo.findMany({
     where: {
       sentMail: null,
       dataPrevistaDevolucao: {
-        gte: startOfDay,
-        lte: endOfDay,
+        lt: new Date(),
       },
     },
-    include: {
-    livro: true,
-    },
+    include: { livro: true },
   });
-  return loans;
 }
 
 export function markLoanAsNotified(loanId: string) {

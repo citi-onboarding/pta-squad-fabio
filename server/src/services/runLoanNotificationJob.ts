@@ -22,5 +22,5 @@ export async function runLoanNotificationJob() {
     } catch (err) {
       console.error("[CronJob] Erro ao buscar empréstimos:", err);
     }
-  console.log("[CronJob] Job de notificação de empréstimos iniciado.");
+  console.log("[CronJob] Job de notificação de empréstimos concluído.");
 }

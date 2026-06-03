@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getLoanAndBook, createLoan } from "../services/LoanService";
+import { getLoanAndBook } from "../services/LoanService";
 import { sendOverdueBookMail } from "../services/MailService";
 
 export interface MailRequestBody {
@@ -26,7 +26,7 @@ class MailController {
 
   } catch (error) {
     console.error("Erro ao enviar email:", error);
-    return res.status(500).json({ message: "Erro ao enviar email" });
+    return res.status(502).json({ message: "Erro ao enviar email" });
     }
   }
 }
