@@ -1,8 +1,8 @@
 {
   "expo": {
     "scheme": "myapp",
-    "name": "nativewind-boilerplate",
-    "slug": "nativewind-boilerplate",
+    "name": "PTA-SQUAD-FABIO",
+    "slug": "pta-squad-fabio",
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
@@ -15,11 +15,14 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
     "android": {
+      "package": "com.citi.pta",
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
@@ -29,6 +32,16 @@
     "web": {
       "favicon": "./src/assets/favicon.png"
     },
-    "plugins": ["expo-router", "expo-asset", "expo-font"]
+    "plugins": [
+      "expo-router",
+      "expo-asset",
+      "expo-font"
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "08543b85-0e19-4214-9d74-d06510603f4b"
+      }
+    }
   }
 }

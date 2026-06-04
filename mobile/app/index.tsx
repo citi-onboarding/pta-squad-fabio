@@ -78,7 +78,7 @@ const App: React.FC = () => {
   const [totalEncontrados, setTotalEncontrados] = useState<number | null>(null)
 
   const buscarEmprestimo = async (nome:string) => {
-    const response = await axios.get('http://localhost:3001/loans', {
+    const response = await axios.get('https://pta-squad-fabio.onrender.com/loans', {
       params: { nomeCliente: nome }
     })
     setEmprestimo(response.data)
