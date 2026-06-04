@@ -109,12 +109,12 @@ export default function SearchBarWithFilter({
 
   // ── Render ──────────────────────────────────────────────────
   return (
-    <div className="flex w-full items-stretch gap-3 rounded-[5px] border border-slate-300 bg-white p-5">
+    <div className="flex w-full flex-col gap-3 rounded-[5px] border border-slate-300 bg-white sm:flex-row sm:items-stretch p-3 sm:p-5">
       {/* SEARCH BAR */}
       <div className="flex flex-1 items-center gap-2.5 rounded-[5px] border border-slate-300 bg-white px-3 py-2">
         <form
           onSubmit={handleSubmit}
-          className="flex flex-1 items-center gap-2.5"
+          className="min-w-0 flex flex-1 items-center gap-2.5"
         >
           <svg
             className="h-[18px] w-[18px] shrink-0 text-slate-400"
@@ -146,7 +146,7 @@ export default function SearchBarWithFilter({
                 e.target.value
               )
             }
-            className="flex-1 border-none bg-transparent text-sm text-slate-800 outline-none"
+            className="min-w-0 flex-1 border-none bg-transparent text-sm text-slate-800 outline-none placeholder:truncate"
             aria-label="Buscar livros"
           />
         </form>
@@ -155,7 +155,7 @@ export default function SearchBarWithFilter({
       {/* FILTER */}
       <div
         ref={dropdownRef}
-        className="relative flex min-w-[180px] items-stretch rounded-[5px] border border-slate-300 bg-white"
+        className="relative flex w-full items-stretch rounded-[5px] border border-slate-300 bg-white sm:min-w-[180px] sm:w-auto"
       >
         <button
           type="button"
