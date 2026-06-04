@@ -143,14 +143,11 @@ export default function CadastrarNovoLivro() {
     );
 
     try {
-      const response = await createBook(payload);
+      await createBook(payload);
 
       toast.dismiss(loadingToast);
 
-      toast.success(
-        response.message ||
-        "Livro cadastrado com sucesso!"
-      );
+      toast.success("Livro cadastrado com sucesso!");
 
       resetForm();
 
