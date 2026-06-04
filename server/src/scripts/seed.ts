@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient, type Prisma } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
@@ -8,8 +8,7 @@ async function main() {
   await prisma.livro.deleteMany()
 
   //Livros
-  const livros = await prisma.livro.createMany({
-    data: [
+  const livrosData: Prisma.LivroCreateManyInput[] = [
       {
         titulo: 'Clean Code',
         autor: 'Robert C. Martin',
@@ -761,15 +760,22 @@ async function main() {
         quantidadeDisponivel: 4,
         categoria: 'INFANTIL',
       },
-    ],
+  ]
+
+  // Insere os livros começando com o estoque cheio (disponível = total);
+  // a quantidade disponível é recalculada no final com base nos empréstimos ativos.
+  await prisma.livro.createMany({
+    data: livrosData.map((livro) => ({
+      ...livro,
+      quantidadeDisponivel: livro.quantidadeTotal,
+    })),
   })
 
-  //Guardar os livros para buscar a Id depois
-  const livrosDoDb = await prisma.livro.findMany()
+  //Guardar os livros para buscar a Id depois (ordenado para mapeamento determinístico)
+  const livrosDoDb = await prisma.livro.findMany({ orderBy: { isbn: 'asc' } })
 
   //Empréstimos
-  const emprestimos = await prisma.emprestimo.createMany({
-    data: [
+  const emprestimosData: Prisma.EmprestimoCreateManyInput[] = [
       {
         livroId: livrosDoDb[0].id,
         nomeCliente: 'João Silva',
@@ -1182,9 +1188,31 @@ async function main() {
         dataLocacao: new Date('2026-05-20'),
         dataPrevistaDevolucao: new Date('2026-07-20'),
       },
-      
-    ],
+
+  ]
+
+  await prisma.emprestimo.createMany({
+    data: emprestimosData,
   })
+
+  // Recalcula a quantidade disponível: cada empréstimo ativo (não devolvido)
+  // ocupa uma unidade do estoque do livro, exatamente como na criação real de um empréstimo.
+  const ativosPorLivro = new Map<string, number>()
+  for (const emprestimo of emprestimosData) {
+    if (emprestimo.status === 'DEVOLVIDO') continue
+    ativosPorLivro.set(
+      emprestimo.livroId,
+      (ativosPorLivro.get(emprestimo.livroId) ?? 0) + 1,
+    )
+  }
+
+  for (const [livroId, ativos] of ativosPorLivro) {
+    const livro = livrosDoDb.find((l) => l.id === livroId)!
+    await prisma.livro.update({
+      where: { id: livroId },
+      data: { quantidadeDisponivel: Math.max(0, livro.quantidadeTotal - ativos) },
+    })
+  }
 
 }
 
