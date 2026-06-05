@@ -31,7 +31,7 @@ import { createBook } from "@/services/bookService";
 const ROUTES = {
   HOME: "/",
   DASHBOARD: "/DashboardPage",
-  LIVRO:  "/Books",
+  LIVRO: "/Books",
 };
 
 const INITIAL_FORM_DATA: BookFormData = {
@@ -87,9 +87,7 @@ export default function CadastrarNovoLivro() {
 
   function handleCategorySelect(category: Category) {
     const selectedCategory =
-      formData.categoria === category
-        ? ""
-        : category;
+      formData.categoria === category ? "" : category;
 
     setFormData((prev) => ({
       ...prev,
@@ -111,48 +109,35 @@ export default function CadastrarNovoLivro() {
       const fieldErrors: BookFormErrors = {};
 
       result.error.issues.forEach((issue) => {
-        const field =
-          issue.path[0] as keyof BookFormErrors;
-
+        const field = issue.path[0] as keyof BookFormErrors;
         fieldErrors[field] = issue.message;
       });
 
       setErrors(fieldErrors);
-
-      toast.error(
-        "Preencha os campos corretamente."
-      );
-
+      toast.error("Preencha os campos corretamente.");
       return null;
     }
 
     setErrors({});
-
     return result.data;
   }
 
-  async function handleSubmitBook(
-    payload: BookPayload
-  ) {
+  async function handleSubmitBook(payload: BookPayload) {
     if (loading) return;
 
     setLoading(true);
-
-    const loadingToast = toast.loading(
-      "Cadastrando livro..."
-    );
+    const loadingToast = toast.loading("Cadastrando livro...");
 
     try {
       await createBook(payload);
 
       toast.dismiss(loadingToast);
-
       toast.success("Livro cadastrado com sucesso!");
 
       resetForm();
 
       setTimeout(() => {
-        router.push(ROUTES.LIVRO );
+        router.push(ROUTES.LIVRO);
       }, 2000);
     } catch (error: unknown) {
       toast.dismiss(loadingToast);
@@ -176,9 +161,7 @@ export default function CadastrarNovoLivro() {
 
   function handleSave() {
     const payload = validateForm();
-
     if (!payload) return;
-
     handleSubmitBook(payload);
   }
 
@@ -187,7 +170,7 @@ export default function CadastrarNovoLivro() {
   }
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-10">
+    <main className="mx-auto max-w-3xl px-4 py-6 sm:py-10">
       <div className="mb-6">
         <h1 className="text-xl font-semibold text-slate-800">
           Cadastrar Novo Livro
@@ -198,8 +181,10 @@ export default function CadastrarNovoLivro() {
         </p>
       </div>
 
-      <div className="rounded-[5px] border border-slate-200 bg-white p-8 shadow-sm">
-        <div className="grid grid-cols-2 gap-5">
+      <div className="rounded-[5px] border border-slate-200 bg-white p-4 sm:p-8 shadow-sm">
+
+        {/* Título + Autor */}
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <Input
             label="Título"
             placeholder="Digite o título"
@@ -217,7 +202,8 @@ export default function CadastrarNovoLivro() {
           />
         </div>
 
-        <div className="mt-5 grid grid-cols-2 gap-5">
+        {/* ISBN + Editora */}
+        <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
           <Input
             label="ISBN"
             placeholder="Digite o ISBN"
@@ -237,6 +223,7 @@ export default function CadastrarNovoLivro() {
           />
         </div>
 
+        {/* Ano + Quantidade */}
         <div className="mt-5 grid grid-cols-2 gap-5">
           <Input
             label="Ano"
@@ -258,20 +245,19 @@ export default function CadastrarNovoLivro() {
           />
         </div>
 
+        {/* Categorias */}
         <div className="mt-6">
           <label className="mb-3 block text-sm font-normal text-slate-700">
             Categoria
           </label>
 
-          <div className="grid grid-cols-5 gap-3">
+          <div className="grid grid-cols-3 gap-3 sm:grid-cols-5">
             {CATEGORIES.map((category) => (
               <CategoryCard
                 key={category}
                 category={category}
                 image={CATEGORY_IMAGES[category]}
-                selected={
-                  formData.categoria === category
-                }
+                selected={formData.categoria === category}
                 onSelect={handleCategorySelect}
               />
             ))}
@@ -284,12 +270,13 @@ export default function CadastrarNovoLivro() {
           )}
         </div>
 
-        <div className="mt-8 flex items-center justify-end gap-3">
+        {/* Botões */}
+        <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-end">
           <button
             type="button"
             onClick={handleCancel}
             disabled={loading}
-            className="rounded-[5px] border border-slate-300 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+            className="w-full rounded-[5px] border border-slate-300 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
           >
             Cancelar
           </button>
@@ -298,11 +285,11 @@ export default function CadastrarNovoLivro() {
             type="button"
             onClick={handleSave}
             disabled={loading}
-            className="flex items-center gap-2 rounded-[5px] bg-[#FF0000] px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#CC0000] disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-2 rounded-[5px] bg-[#FF0000] px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#CC0000] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
           >
             {loading ? (
               <>
-                <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+                <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                 Salvando...
               </>
             ) : (
