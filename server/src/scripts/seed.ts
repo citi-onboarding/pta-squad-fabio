@@ -4,6 +4,7 @@ const prisma = new PrismaClient()
 
 async function main() {
   //Limpar dados anteriores
+  await prisma.sentMail.deleteMany()
   await prisma.emprestimo.deleteMany()
   await prisma.livro.deleteMany()
 

@@ -5,8 +5,8 @@ import { Toaster } from "react-hot-toast";
 import "@/styles/globals.css";
 
 export const metadata: Metadata = {
-  title: "Next.js Boilerplate",
-  description: "A simple boilerplate for next.js",
+  title: "Biblioteca Escolar",
+  description: "Sistema de gerenciamento da biblioteca escolar",
   manifest: "/manifest.json",
 };
 
