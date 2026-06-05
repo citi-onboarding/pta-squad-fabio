@@ -158,15 +158,16 @@ export default function CadastrarNovoLivro() {
       toast.dismiss(loadingToast);
 
       if (axios.isAxiosError(error)) {
+        const backendMessage = error.response?.data?.message;
+
         const message =
-          error.response?.data?.message ||
-          "Erro ao cadastrar o livro.";
+          backendMessage === "Something Wrong. ERROR INSERTING IN DATABASE"
+            ? "Não foi possível cadastrar o livro."
+            : backendMessage || "Não foi possível cadastrar o livro.";
 
         toast.error(message);
       } else {
-        toast.error(
-          "Erro inesperado. Tente novamente."
-        );
+        toast.error("Não foi possível cadastrar o livro.");
       }
     } finally {
       setLoading(false);

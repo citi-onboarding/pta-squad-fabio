@@ -45,7 +45,6 @@ export default function ModalDelete({
             return
         }
 
-
         try {
             await api.patch(`/book/${bookId}`, {
                 quantidadeARemover: Number(quantidadeAReduzir)
@@ -70,8 +69,17 @@ export default function ModalDelete({
             onClose()
             onDeleteSuccess?.()
 
-        } catch (err: any) {
-            setError(err.response?.data?.messageFromDelete || "Erro ao deletar livro")
+        }  catch (err: any) {
+            const backendMessage =
+                err.response?.data?.message ||
+                err.response?.data?.messageFromDelete
+
+            const message =
+                backendMessage === "Something Wrong. The value was NOT deleted"
+                    ? "Não foi possível deletar o livro."
+                    : backendMessage || "Não foi possível deletar o livro."
+
+            setError(message)
         }
     }
 
