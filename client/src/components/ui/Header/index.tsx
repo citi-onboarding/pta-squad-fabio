@@ -108,7 +108,8 @@ export default function Header() {
               width={isUltrawide ? 22 : 16}
               height={isUltrawide ? 22 : 16}
             />
-            <span>Dashboard</span>
+            {/*Adicionei a propriedade hidden sm:inline pra desaparecer o texto quando o tamanho for pequeno*/}
+            <span className="hidden sm:inline">Dashboard</span>
           </Link>
 
           <Link href="/Books" className={navLinkClass("/Books")}>
@@ -118,7 +119,8 @@ export default function Header() {
               width={isUltrawide ? 22 : 16}
               height={isUltrawide ? 22 : 16}
             />
-            <span>Livros</span>
+            {/*Adicionei a propriedade hidden sm:inline pra desaparecer o texto quando o tamanho for pequeno*/}
+            <span className="hidden sm:inline">Livros</span>
           </Link>
 
           <Link
@@ -154,7 +156,8 @@ export default function Header() {
               width={isUltrawide ? 22 : isCompactMobile ? 12 : isMobile ? 14 : 16}
               height={isUltrawide ? 22 : isCompactMobile ? 12 : isMobile ? 14 : 16}
             />
-            <span>Novo Livro</span>
+            {/*Adicionei a propriedade hidden sm:inline pra desaparecer o texto quando o tamanho for pequeno*/}
+            <span className="hidden sm:inline">Novo Livro</span>
           </Link>
         </nav>
       </div>
